@@ -74,7 +74,7 @@ if confirm "Do you want to setup eww?"; then
     cd /tmp
     git clone --depth 1 https://github.com/elkowar/eww.git && cd eww
     cargo build --release --no-default-features --features=wayland
-    sudo mv /home/juanolon/.cargo/bin/eww /usr/local/bin
+    sudo mv target/release/eww /usr/local/bin
     cd -
 fi
 
