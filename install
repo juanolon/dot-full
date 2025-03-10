@@ -10,16 +10,32 @@ sudo apt install \
 # update fonts
 fc-cache
 
-# setup kitty
-curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-cd ~/.bin
-ln -s /home/juanolon/.local/kitty.app/bin/kitty kitty
-ln -s /home/juanolon/.local/kitty.app/bin/kitten kitten
+confirm() {
+    while true; do
+        read -rp "$1 (yes/no): " choice
+        case "$choice" in
+            yes|y) return 0 ;;
+            no|n) return 1 ;;
+            *) echo "Please answer yes or no." ;;
+        esac
+    done
+}
 
-cd /tmp && \
-    wget https://github.com/chshersh/tool-sync/releases/download/v0.2.0/tool-x86_64-unknown-linux-gnu.tar.gz && \
-    tar -xf tool-x86_64-unknown-linux-gnu.tar.gz && \
-    sudo mv tool /usr/local/bin/tool-sync
+# setup kitty
+if confirm "Do you want to install Kitty?"; then
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+    cd ~/.bin
+    ln -s /home/juanolon/.local/kitty.app/bin/kitty kitty
+    ln -s /home/juanolon/.local/kitty.app/bin/kitten kitten
+    cd
+fi
+
+if confirm "Do you want to setup tool-sync?"; then
+    cd /tmp && \
+        wget https://github.com/chshersh/tool-sync/releases/download/v0.2.0/tool-x86_64-unknown-linux-gnu.tar.gz && \
+        tar -xf tool-x86_64-unknown-linux-gnu.tar.gz && \
+        sudo mv tool /usr/local/bin/tool-sync
+fi
 
 # update neovim
 # see old install
