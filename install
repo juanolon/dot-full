@@ -42,8 +42,11 @@ if confirm "Do you want to setup tool-sync?"; then
         sudo mv tool /usr/local/bin/tool-sync
 fi
 
-# update neovim
-# see old install
+    cd /tmp && \
+        wget https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz && \
+        tar -xf nvim-linux-x86_64.tar.gz && \
+        sudo mv tool /usr/local/bin/tool-sync
+
 
 if confirm "Do you want to setup albert?"; then
     echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/Debian_12/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
@@ -59,3 +62,4 @@ curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo 
     sudo mkdir /usr/share/desktop-directories
     sudo apt-get update && sudo apt-get install spotify-client
 fi
+
