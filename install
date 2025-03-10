@@ -1,4 +1,4 @@
-#!/bin/bashsetup-keyboardboardboard
+#!/bin/bash
 
 sudo apt install \
     sway kitty firefox-esr swaylock wl-clipboard pass pavucontrol fonts-font-awesome wayland-utils alsa-utils bc acpi swaybg rfkill colordiff swayidle \
@@ -32,7 +32,7 @@ if confirm "Do you want to install Kitty?"; then
     cd ~/.bin
     ln -s /home/juanolon/.local/kitty.app/bin/kitty kitty
     ln -s /home/juanolon/.local/kitty.app/bin/kitten kitten
-    cd
+    cd -
 fi
 
 if confirm "Do you want to setup tool-sync?"; then
@@ -40,12 +40,18 @@ if confirm "Do you want to setup tool-sync?"; then
     wget https://github.com/chshersh/tool-sync/releases/download/v0.2.0/tool-x86_64-unknown-linux-gnu.tar.gz
     tar -xf tool-x86_64-unknown-linux-gnu.tar.gz
     sudo mv tool /usr/local/bin/tool-sync
+    cd -
 fi
 
+if confirm "Do you want to setup nvim?"; then
     cd /tmp
     wget https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz
-    tar -xf nvim-linux-x86_64.tar.gz
-    sudo mv tool /usr/local/bin/tool-sync
+    tar -xf nvim-linux-x86_64.tar.gz && cd nvim-linux-x86_64
+    sudo mv -r share /usr/local
+    sudo mv -r lib /usr/local
+    sudo mv -r bin /usr/local
+    cd -
+fi
 
 
 if confirm "Do you want to setup albert?"; then
@@ -69,6 +75,7 @@ if confirm "Do you want to setup eww?"; then
     git clone --depth 1 https://github.com/elkowar/eww.git && cd eww
     cargo build --release --no-default-features --features=wayland
     sudo mv /home/juanolon/.cargo/bin/eww /usr/local/bin
+    cd -
 fi
 
 if confirm "Do you want to setup keyboard?"; then
@@ -92,6 +99,7 @@ if confirm "Do you want to install gamma/temperature?"; then
     git clone https://github.com/MaxVerevkin/wl-gammarelay-rs
     cd wl-gammarelay-rs && cargo install wl-gammarelay-rs --locked
     sudo mv /home/juanolon/.cargo/bin/wl-gammarelay-rs /usr/local/bin
+    cd -
 fi
 
 echo "TODO: setup theme"
