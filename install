@@ -1,1 +1,25 @@
-sudo apt install sway kitty firefox-esr swaylock wl-clipboard pass pavucontrol cmake fonts-font-awesome wayland-utils alsa-utils bc acpi thunar transmission zathura btop swaybg rfkill dunst pinentry-qt gnupg2 rsync colordiff libnotify-bin
+sudo apt install /
+    sway kitty firefox-esr swaylock wl-clipboard pass pavucontrol fonts-font-awesome wayland-utils alsa-utils bc acpi swaybg rfkill colordiff /
+    thunar transmission zathura /
+    btop dunst /
+    pinentry-qt gnupg2 rsync /
+    libnotify-bin notyfi-send /
+    grim slurp imagemagick wl-copy swaymsg /
+    software-properties-common python3-launchpadlib
+
+# update fonts
+fc-cache
+
+# setup kitty
+curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+cd ~/.bin
+ln -s /home/juanolon/.local/kitty.app/bin/kitty kitty
+ln -s /home/juanolon/.local/kitty.app/bin/kitten kitten
+
+cd /tmp && \
+    wget https://github.com/chshersh/tool-sync/releases/download/v0.2.0/tool-x86_64-unknown-linux-gnu.tar.gz && \
+    tar -xf tool-x86_64-unknown-linux-gnu.tar.gz && \
+    sudo mv tool /usr/local/bin/tool-sync
+
+# update neovim
+# see old install
