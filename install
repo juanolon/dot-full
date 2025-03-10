@@ -10,7 +10,8 @@ sudo apt install \
     software-properties-common python3-launchpadlib \
     brightnessctl \
     default-jdk \
-    udiskie dosfstools mtools
+    udiskie dosfstools mtools \
+    python3-i3ipc
 
 # update fonts
 fc-cache
@@ -32,6 +33,7 @@ if confirm "Do you want to install Kitty?"; then
     cd ~/.bin
     ln -s /home/juanolon/.local/kitty.app/bin/kitty kitty
     ln -s /home/juanolon/.local/kitty.app/bin/kitten kitten
+    sudo apt remove kitty
     cd -
 fi
 
