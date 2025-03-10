@@ -3,9 +3,12 @@ sudo apt install \
     thunar transmission zathura \
     btop dunst \
     pinentry-qt gnupg2 rsync \
-    libnotify-bin notyfi-send \
-    grim slurp imagemagick wl-copy swaymsg \
-    software-properties-common python3-launchpadlib
+    libnotify-bin \
+    grim slurp imagemagick \
+    software-properties-common python3-launchpadlib \
+    brightnessctl \
+    default-jdk \
+    udiskie dosfstools mtools
 
 # update fonts
 fc-cache
@@ -39,3 +42,18 @@ fi
 
 # update neovim
 # see old install
+
+if confirm "Do you want to setup albert?"; then
+    echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/Debian_12/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
+    curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/Debian_12/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+    sudo apt update
+    sudo apt install albert
+fi
+
+if confirm "Do you want to setup spotify?"; then
+    curl -sS https://download.spotify.com/debian/pubkey_7A3A762FAFD4A51F.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+    echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+# ensure that xdg-desktop-menu entry is writen. if folder doesn't exist, it doesnt make an entry
+    sudo mkdir /usr/share/desktop-directories
+    sudo apt-get update && sudo apt-get install spotify-client
+fi
