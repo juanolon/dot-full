@@ -11,19 +11,17 @@ cd dual-function-keys
 make && sudo make install
 
 INTERCEPTION_FILE="/etc/interception/udevmon.yaml"
-INTERCEPTION_CONFIG='
-- JOB: "interception -g $DEVNODE | dual-function-keys -c /etc/interception/dual-function-keys/my-mappings.yaml | uinput -d $DEVNODE"
-DEVICE:
-NAME: "AT Translated Set 2 keyboard"
+INTERCEPTION_CONFIG='- JOB: "interception -g $DEVNODE | dual-function-keys -c /etc/interception/dual-function-keys/my-mappings.yaml | uinput -d $DEVNODE"
+  DEVICE:
+    NAME: "AT Translated Set 2 keyboard"
 
 - JOB: "interception -g $DEVNODE | dual-function-keys -c /etc/interception/dual-function-keys/my-mappings.yaml | uinput -d $DEVNODE"
-DEVICE:
-NAME: "USB Keyboard*"
+  DEVICE:
+    NAME: "USB Keyboard*"
 '
 sudo mkdir -p /etc/interception/dual-function-keys/
 MAPPINGS_FILE="/etc/interception/dual-function-keys/my-mappings.yaml"
-MAPPINGS='
-MAPPINGS:
+MAPPINGS='MAPPINGS:
     - KEY: KEY_LEFTSHIFT
       TAP: [KEY_LEFTSHIFT, KEY_9]
       HOLD: KEY_LEFTSHIFT
