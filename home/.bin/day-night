@@ -1,0 +1,115 @@
+#!/bin/bash
+set -o noclobber # allow echo .. >| file
+
+MODE_FILE=$HOME/.background-mode
+touch $MODE_FILE
+DUNSTRC=$HOME/.config/dunst/dunstrc.d/
+
+# # 
+STATUS=""
+ICON=""
+COLOR_SCHEME="default"
+THEME=""
+ICON_THEME=""
+
+MODE=$(cat $MODE_FILE)
+: ${MODE:="light"}
+
+if [ $MODE == "light" ]; then
+    MODE="dark"
+    STATUS="day"
+    ICON=""
+    # KITTY
+    KITTY_THEME="Rosé Pine"
+    # starship
+    STARSHIP_THEME_OLD="rose-pine-dawn"
+    STARSHIP_THEME="rose-pine-moon"
+    # GTK
+    # COLOR_SCHEME="prefer-dark"
+    # THEME="Adwaita-dark"
+    # ICON_THEME="breeze-dark"
+    COLOR_SCHEME="prefer-dark"
+    THEME="rose-pine-gtk"
+    ICON_THEME="rose-pine-icons"
+    # higher number is higher priority
+    DUNST_LIGHT_FILE=$DUNSTRC/50-rose-pine-dawn.conf
+    DUNST_DARK_FILE=$DUNSTRC/80-rose-pine-moon.conf
+    OLD_DUNST_LIGHT_FILE=$DUNSTRC/80-rose-pine-dawn.conf
+    OLD_DUNST_DARK_FILE=$DUNSTRC/50-rose-pine-moon.conf
+else
+    MODE="light"
+    STATUS="night"
+    ICON=""
+    # KITTY
+    KITTY_THEME="Rosé Pine Dawn"
+    # starship
+    STARSHIP_THEME_OLD="rose-pine-moon"
+    STARSHIP_THEME="rose-pine-dawn"
+    # GTK
+    # COLOR_SCHEME="default"
+    # THEME="Adwaita"
+    # ICON_THEME="breeze"
+    COLOR_SCHEME="default"
+    THEME="rose-pine-dawn-gtk"
+    ICON_THEME="rose-pine-dawn-icons"
+    DUNST_LIGHT_FILE=$DUNSTRC/80-rose-pine-dawn.conf
+    DUNST_DARK_FILE=$DUNSTRC/50-rose-pine-moon.conf
+    OLD_DUNST_LIGHT_FILE=$DUNSTRC/50-rose-pine-dawn.conf
+    OLD_DUNST_DARK_FILE=$DUNSTRC/80-rose-pine-moon.conf
+fi
+
+
+case $1 in
+    "icon")
+        echo $ICON
+    ;;
+    "status")
+        # echo "$STATUS $ICON"
+        echo "{\"class\": \"$STATUS\", \"text\": \"$ICON\", \"tooltip\": \"$ICON $STATUS\", \"alt\": \"$STATUS\"}"
+    ;;
+    "toggle")
+
+        # kitty
+        # kitty +kitten themes --reload-in=all gruvbox $MODE doh
+        # kitty +kitten themes --reload-in=all --cache-age=-1 Adwaita $MODE
+        kitty +kitten themes --reload-in=all --cache-age=-1 $KITTY_THEME
+
+        sed -i "s/palette = '$STARSHIP_THEME_OLD'/palette = '$STARSHIP_THEME'/" ~/.config/zsh/starship.toml
+
+        sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/zsh/current-lscolor.zsh
+
+        sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/waybar/colors-rose-pine.css
+
+        sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/eww/colors-rose-pine.scss
+
+        # sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/bat/config
+
+
+        # dunst
+        mv $OLD_DUNST_LIGHT_FILE $DUNST_LIGHT_FILE
+        mv $OLD_DUNST_DARK_FILE $DUNST_DARK_FILE
+        pkill dunst #;notify-send "Dunst reloaded"
+
+        # GTK
+        # https://hannes.hauswedell.net/post/2023/12/10/darkmode/
+        gsettings set org.gnome.desktop.interface color-scheme $COLOR_SCHEME
+        gsettings set org.gnome.desktop.interface gtk-theme $THEME
+        gsettings set org.gnome.desktop.interface icon-theme $ICON_THEME
+
+        # reload bar
+        # pkill -SIGUSR2 waybar
+
+        # reload eww
+        # eww reload
+
+        # update mode
+        echo $MODE >| $MODE_FILE
+
+        # wait .1
+        notify-send -r 394763 -t 2000 -u normal "$MODE Mode"
+    ;;
+    *)
+        echo "Use: day-night <icon|status|toggle>"
+        exit 1
+    ;;
+esac

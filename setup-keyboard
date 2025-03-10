@@ -1,0 +1,56 @@
+#!/bin/bash
+
+
+sudo add-apt-repository ppa:deafmute/interception
+sudo sed -i 's/bookworm/bionic/g' /etc/apt/sources.list.d/deafmute-ubuntu-interception-bookworm.list
+sudo apt update && install interception-tools libevdev-dev libyaml-cpp-dev
+
+cd /tmp && \
+    git clone https://gitlab.com/interception/linux/plugins/dual-function-keys.git && \
+    cd dual-function-keys && \
+    make && sudo make install
+
+INTERCEPTION_FILE="/etc/interception/udevmon.yaml"
+INTERCEPTION_CONFIG='
+- JOB: "interception -g $DEVNODE | dual-function-keys -c /etc/interception/dual-function-keys/my-mappings.yaml | uinput -d $DEVNODE"
+DEVICE:
+NAME: "AT Translated Set 2 keyboard"
+
+- JOB: "interception -g $DEVNODE | dual-function-keys -c /etc/interception/dual-function-keys/my-mappings.yaml | uinput -d $DEVNODE"
+DEVICE:
+NAME: "USB Keyboard*"
+'
+MAPPINGS_FILE="/etc/interception/dual-function-keys/my-mappings.yaml"
+MAPPINGS='
+MAPPINGS:
+    - KEY: KEY_LEFTSHIFT
+      TAP: [KEY_LEFTSHIFT, KEY_9]
+      HOLD: KEY_LEFTSHIFT
+    - KEY: KEY_RIGHTSHIFT
+      TAP: [KEY_LEFTSHIFT, KEY_0]
+      HOLD: KEY_RIGHTSHIFT
+    - KEY: KEY_CAPSLOCK
+      TAP: KEY_ESC
+      HOLD: KEY_LEFTCTRL
+'
+
+SERVICE_PATH="/etc/systemd/udevmon.service"
+SERVICE_FILE='
+[Unit]
+Description=udevmon
+Wants=systemd-udev-settle.service
+After=systemd-udev-settle.service
+
+[Service]
+ExecStart=/usr/bin/nice -n -20 /usr/bin/udevmon -c /etc/udevmon.yaml
+
+[Install]
+WantedBy=multi-user.target
+'
+
+echo "$INTERCEPTION_CONFIG" | sudo tee "$INTERCEPTION_FILE" > /dev/null
+
+echo "$MAPPINGS" | sudo tee "$MAPPINGS_FILE" > /dev/null
+echo "$SERVICE_FILE" | sudo tee "$SERVICE_PATH" > /dev/null
+
+sudo systemctl enable --now udevmon

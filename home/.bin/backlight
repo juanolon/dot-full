@@ -1,0 +1,66 @@
+#!/bin/bash
+
+INCREMENT=20
+SET_VALUE=0
+MAX=$(brightnessctl m)
+BACKLIGHT=$(brightnessctl g)
+
+case $1 in
+    set)
+        # $2 is in percent
+        val=$(echo "scale=2; ($2*$MAX)/100" | bc)
+		if [ "$val" -lt "1" ]; then
+			val=1
+		fi
+        brightnessctl s $val
+        ;;
+	up)
+		TOTAL=$((BACKLIGHT + INCREMENT))
+		if [ "$TOTAL" -gt "$MAX" ]; then
+			exit 1
+		fi
+		SET_VALUE=1
+		;;
+	down)
+		TOTAL=$((BACKLIGHT - INCREMENT))
+		if [ "$TOTAL" -lt "1" ]; then
+			exit 1
+		fi
+		SET_VALUE=1
+		;;
+	get)
+		val=$((BACKLIGHT * 100 / MAX))
+		echo $val
+		exit 0
+	    ;;
+	min)
+		TOTAL=$INCREMENT
+		SET_VALUE=1
+		;;
+	max)
+		# TEMP_VALUE=$BACKLIGHT
+		# while [ "$TEMP_VALUE" -lt "$MAX" ]; do
+		# 	TEMP_VALUE=$((TEMP_VALUE + 1))
+		# 	if [ "$TEMP_VALUE" -gt "$MAX" ]; then TEMP_VALUE=$MAX; fi
+		# 	echo "$TEMP_VALUE" > $BLFILE
+		# done
+		SET_VALUE=1
+		TOTAL=$MAX
+		;;
+	off)
+		TEMP_VALUE=$BACKLIGHT
+		while [ "$TEMP_VALUE" -gt "0" ]; do
+			TEMP_VALUE=$((TEMP_VALUE - 1))
+			if [ "$TEMP_VALUE" -lt "0" ]; then TEMP_VALUE=0; fi
+			echo "$TEMP_VALUE" > $BLFILE
+		done
+		;;
+	*)
+		echo "Use: screen-backlight up|down|max|min|off"
+		;;
+esac
+
+if [ "$SET_VALUE" -eq "1" ]; then
+    brightnessctl -q s $TOTAL
+    # sendNotification
+fi

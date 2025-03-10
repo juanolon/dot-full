@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/bashsetup-keyboardboardboard
 
 sudo apt install \
-    sway kitty firefox-esr swaylock wl-clipboard pass pavucontrol fonts-font-awesome wayland-utils alsa-utils bc acpi swaybg rfkill colordiff \
+    sway kitty firefox-esr swaylock wl-clipboard pass pavucontrol fonts-font-awesome wayland-utils alsa-utils bc acpi swaybg rfkill colordiff swayidle \
     thunar transmission zathura \
     btop dunst \
     pinentry-qt gnupg2 rsync \
@@ -36,14 +36,17 @@ if confirm "Do you want to install Kitty?"; then
 fi
 
 if confirm "Do you want to setup tool-sync?"; then
-    cd /tmp && \
-        wget https://github.com/chshersh/tool-sync/releases/download/v0.2.0/tool-x86_64-unknown-linux-gnu.tar.gz && \
-        tar -xf tool-x86_64-unknown-linux-gnu.tar.gz && \
-        sudo mv tool /usr/local/bin/tool-sync
+    cd /tmp
+    wget https://github.com/chshersh/tool-sync/releases/download/v0.2.0/tool-x86_64-unknown-linux-gnu.tar.gz
+    tar -xf tool-x86_64-unknown-linux-gnu.tar.gz
+    sudo mv tool /usr/local/bin/tool-sync
 fi
 
-# update neovim
-# see old install
+    cd /tmp
+    wget https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz
+    tar -xf nvim-linux-x86_64.tar.gz
+    sudo mv tool /usr/local/bin/tool-sync
+
 
 if confirm "Do you want to setup albert?"; then
     echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/Debian_12/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
@@ -59,3 +62,39 @@ curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo 
     sudo mkdir /usr/share/desktop-directories
     sudo apt-get update && sudo apt-get install spotify-client
 fi
+
+if confirm "Do you want to setup eww?"; then
+    sudo apt install libgtk-3-dev libgio2.0-cil-dev libdbusmenu-gtk3-dev libgtk-layer-shell-dev
+    cd /tmp
+    git clone --depth 1 https://github.com/elkowar/eww.git && cd eww
+    cargo build --release --no-default-features --features=wayland
+    sudo mv /home/juanolon/.cargo/bin/eww /usr/local/bin
+fi
+
+if confirm "Do you want to setup keyboard?"; then
+    source setup-keyboard
+fi
+
+if confirm "Do you want to setup bluetooth?"; then
+    echo "TODO"
+fi
+
+if confirm "Do you want to setup latex?"; then
+    echo "TODO"
+fi
+
+if confirm "Do you want to install other?"; then
+    sudo tool-sync --config /home/juanolon/.config/tool-sync/config.toml sync
+fi
+
+if confirm "Do you want to install gamma/temperature?"; then
+    cd /tmp
+    git clone https://github.com/MaxVerevkin/wl-gammarelay-rs
+    cd wl-gammarelay-rs && cargo install wl-gammarelay-rs --locked
+    sudo mv /home/juanolon/.cargo/bin/wl-gammarelay-rs /usr/local/bin
+fi
+
+echo "TODO: setup theme"
+echo "TODO: install tpl"
+# https://github.com/rose-pine/gtk?tab=readme-ov-file
+echo "TODO: setup gtk theme"
