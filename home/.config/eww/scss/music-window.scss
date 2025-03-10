@@ -1,0 +1,54 @@
+.music-window {
+  @include window;
+  border: 1px solid $base;
+
+}
+
+.music {
+  .music-cover-art {
+    background-position: center;
+    background-size: cover;
+    border-radius: 8px;
+    margin: 1em;
+    min-height: 170px;
+    min-width: 170px;
+  }
+
+  .music-box {
+    margin: 1rem 1rem 1rem 0;
+
+    .music-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .music-artist {
+      color: $text;
+    }
+
+    .music-button label {
+      color: $text;
+      font-size: 2rem;
+    }
+
+    .music-time {
+      color: $text;
+      margin: 0 1rem;
+    }
+
+    .music-bar scale {
+      highlight {
+        background-image: linear-gradient(to right, $gold 30%, $rose 100%);
+        border-radius: 24px;
+      }
+
+      trough {
+        background-color: $base;
+        border-radius: 24px;
+        margin-top: 0;
+        min-height: 10px;
+        min-width: 170px;
+      }
+    }
+  }
+}

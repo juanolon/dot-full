@@ -1,0 +1,96 @@
+(defwidget dock []
+  (box :class "dock"
+       :orientation "vertical"
+       :space-evenly false
+    (box :class "floater"
+      (btn
+        :class "btn pomo ${pomo.class}"
+        :onclick "scripts/pomo toggle-time"
+        :onrightclick "scripts/pomo toggle-mode"
+        :tooltip {pomo.tooltip}
+        :icon {pomo.icon}
+        )
+      (btn
+        :onclick "firefox https://console.genesiscloud.com/dashboard/instances"
+        :tooltip {gpu.tooltip}
+        :class "btn gpu ${gpu.class}"
+        :icon {gpu.icon}
+        )
+      (btn
+        :onclick "dunstify 'TODO setup battery toggle'"
+        :class "btn"
+        :tooltip ""
+        :icon ""
+        )
+      (btn
+        :onclick "dunstify 'TODO setup usb mount?'"
+        :class "btn"
+        :tooltip ""
+        :icon "󱊟"
+        )
+      )
+    (box :class "floater"
+         :space-evenly false
+      (volume :iswindow false)
+      (btn
+        :class "btn ${vol.ismute ? "active" : ""}"
+        :onclick "scripts/volume mute SINK"
+        :tooltip ""
+        :icon "󰖁"
+        )
+      )
+    (box :class "floater"
+         :orientation "vertical"
+      (box
+        :space-evenly false
+        (brightness :iswindow false)
+        (btn
+          :class "btn ${daynight.class}"
+          :onclick "day-night toggle"
+          :tooltip ""
+          :icon {daynight.text}
+          )
+        )
+      (box
+        :space-evenly false
+        (scaler :class "brightness"
+                :active {auto_dawn == "running" ? "false" : "true"}
+                :value {gamma_temp.temperature}
+                :change "scripts/brightness temp-set {}"
+                :icon ""
+          )
+        (btn
+          :class "btn auto_dawn ${auto_dawn == "stopped" ? "" : "active"}"
+          :tooltip ""
+          :onclick "${auto_dawn == "stopped" ?
+                      "scripts/dawn-temperature start" :
+                      "scripts/dawn-temperature stop"
+          }"
+          :icon "󰃡"
+          )
+        )
+      (box
+        :space-evenly false
+        (scaler :class "brightness"
+                :active {auto_dawn == "running" ? "false" : "true"}
+                :value {gamma_temp.gamma}
+                :change "scripts/brightness gamma-set {}"
+                :icon ""
+          )
+        (btn
+          :class "btn"
+          :tooltip ""
+          :onclick "scripts/brightness reset"
+          :icon "󰁯"
+          )
+        )
+      )
+    (box :class "floater"
+         :visible {music_on}
+      (music)
+      )
+    (box :class "floater"
+      (todos-list)
+      )
+    )
+  )

@@ -1,0 +1,42 @@
+.workspaces {
+  padding: 3px 10px 0;
+
+  button {
+    padding: 0;
+    // margin-left: 8px;
+    padding-bottom: 5px;
+
+    &.focused {
+      label {
+        margin-bottom: -5px;
+        border-bottom: 5px solid $rose;
+      }
+    }
+
+    &.urgent {
+      label {
+        margin-bottom: -5px;
+        border-bottom: 5px solid $love;
+      }
+    }
+
+    label {
+      background: $overlay;
+      border-radius: 0;
+      margin: 0;
+      padding: 0px 3px 0px 3px;
+      // padding: 8px 8px 4px 8px;
+      min-height: 20px;
+    }
+
+    &:hover {
+      label {
+        margin-bottom: -5px;
+        border-bottom: 5px solid $rose;
+      }
+    }
+
+  }
+}
+
+.workspace.bar-block {}

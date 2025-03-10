@@ -1,0 +1,80 @@
+(defwindow bar
+  :monitor 0
+  :geometry (geometry :width "100%"
+                      :anchor "top center")
+  :exclusive true
+  :namespace "home"
+  (bar)
+)
+
+(defwindow music
+  :stacking "fg"
+  :focusable false
+  :monitor 0
+  :geometry (geometry
+    :x "1%"
+    :y "1%"
+    :width "0%"
+    :height "0%"
+    :anchor "top left")
+  (music-window))
+
+(defwindow volume
+  :stacking "fg"
+  :focusable false
+  :monitor 0
+  :geometry (geometry
+    :x "0%"
+    :y "6px"
+    :width "0%"
+    :height "0%"
+    :anchor "center top")
+  (volume :iswindow true))
+
+(defwindow brightness
+  :stacking "fg"
+  :focusable false
+  :monitor 0
+  :geometry (geometry
+    :x "0%"
+    :y "6px"
+    :width "0%"
+    :height "0%"
+    :anchor "center top")
+  (brightness :iswindow true))
+
+(defwindow dock
+  :stacking "fg"
+  :focusable false
+  :monitor 0
+  :geometry (geometry
+    :x "5px"
+    :y "0%"
+    :width "0%"
+    :height "0%"
+    :anchor "top left")
+  (dock))
+
+(defwindow wlan
+  :stacking "fg"
+  :focusable "false"
+  :monitor 0
+  :geometry (geometry
+    :x "1%"
+    :y "1%"
+    :width "0%"
+    :height "0%"
+    :anchor "top right")
+  (wlan-list))
+
+(defwindow swaymode
+  :stacking "fg"
+  :focusable "false"
+  :monitor 0
+  :geometry (geometry
+    :x "1%"
+    :y "1%"
+    :width "0%"
+    :height "0%"
+    :anchor "top center")
+  (swaymode))

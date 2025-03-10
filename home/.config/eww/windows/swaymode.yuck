@@ -1,0 +1,29 @@
+(defvar mode '{"name": "System", "options": [{"name": "Lock", "key": "l", "icon": "󰌾"}, {"name": "Logout", "key": "l", "icon": "󰗽"}, {"name": "Suspend", "key": "l", "icon": "a"}, {"name": "Hibernate", "key": "h", "icon": "󰒲"}, {"name": "Reboot", "key": "r", "icon": ""}, {"name": "Shutdown", "key": "S", "icon": ""}]}')
+
+(defwidget mode_icon [label key icon]
+  (box
+    :class "mode-icon"
+    :orientation "vertical"
+    :space-evenly false
+    (label :class "icon" :text {icon})
+    (label :class "label" :text "(${key}) ${label}")
+    )
+  )
+
+(defwidget swaymode []
+  (box
+    :class "swaymode"
+    :orientation "vertical"
+    :space-evenly false
+    (box
+      :orientation "horizontal"
+      (for entry in {mode.options}
+        (mode_icon
+          :label {entry.name}
+          :key {entry.key}
+          :icon {entry.icon}
+          )
+        )
+      )
+    )
+  )

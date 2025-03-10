@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+# $1 BAT0/BAT1..
+# $2 critical level
+
+ID=$1
+BAT=/sys/class/power_supply/$1
+WARN=${2:-20}
+CRIT=${3:-10}
+UPDATE=3
+
+FILE=/tmp/battery_notified
+
+notify() {
+    if [[ $PERC -le $WARN ]] && [[ $STAT == "Discharging" ]]; then
+        notify-send -r 123000 --urgency=normal --icon="battery-caution-symbolic" "Battery Low on $ID" "Current charge: $PERC%"
+    elif [[ $PERC -le $CRIT ]] && [[ $STAT == "Discharging" ]]; then
+        notify-send -r 123000 --urgency=critical --icon="battery-caution-symbolic" "Battery Low on $ID" "Current charge: $PERC%"
+    fi
+}
+
+gettime() {
+    # $1 BAT0/BAT1
+    FULL=$(cat /sys/class/power_supply/$ID/energy_full)
+    NOW=$(cat /sys/class/power_supply/$ID/energy_now)
+
+    if [ "$RATE" -gt 0 ]; then
+        if [ "$STATE" = "Discharging" ]; then
+            EX="$NOW / $RATE"
+        else
+            EX="($FULL - $NOW) / $RATE"
+        fi
+        date -u -d@"$(bc -l <<< "$EX * 3600")" +%H:%M
+    fi
+}
+
+icons=("󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂")
+
+icons_charging=("󰢜" "󰂆" "󰂇" "󰂈" "󰢝" "󰂉" "󰢞" "󰂊" "󰂋")
+# 󱊡󱊢󱊣󱊤󱊥󱊦
+
+geticon() {
+    level=$(awk -v n="$PERC" 'BEGIN{print int((n-1)/11)}')
+    echo "${icons[$level]}"
+}
+getchargingicon() {
+    level=$(awk -v n="$PERC" 'BEGIN{print int((n-1)/11)}')
+    echo "${icons_charging[$level]}"
+}
+
+
+getstatus() {
+    # critical, warning, charging, full, plugged
+    status=""
+    icon=""
+    PERC_INT=$((10#$PERC))
+    if [ "$STAT" = "Discharging" ]; then
+        if [[ $PERC_INT -le $CRIT ]]; then
+            status="critical"
+            icon="󰂃"
+        elif [[ $PERC_INT -le $WARN ]]; then
+            status="warning"
+            icon="󰂃"
+        else
+            status="unplugged"
+            icon=$(geticon)
+        fi
+    elif [ "$STAT" = "Not charging" ]; then
+        if [ $CONN = "true" ]; then
+            status="plugged"
+            icon=$(geticon)
+        else
+            if [[ $PERC_INT -le $CRIT ]]; then
+                status="critical"
+                icon="󰂃"
+            elif [[ $PERC_INT -le $WARN ]]; then
+                status="warning"
+                icon="󰂃"
+            else
+                status="unplugged"
+                icon=$(geticon)
+            fi
+        fi
+    elif [ "$STAT" = "Full" ]; then
+        status="full"
+        icon="󱈑"
+    elif [ "$STAT" = "Charging" ]; then
+        status="charging"
+        icon=$(getchargingicon)
+    fi
+
+    echo "$status $icon"
+}
+
+status() {
+    STAT=$(cat $BAT/status)
+    PERC=$(cat $BAT/capacity)
+    RATE=$(cat $BAT/power_now)
+    CONN=$(acpi -a | grep -q 'on-line' && echo "true" || echo "false")
+
+    read status icon <<< $(getstatus)
+
+    echo '{ "icon": "'"$icon"'", "percentage": '"$PERC"', "status": "'"$status"'", "time": "'"$(gettime)"'", "id": "'"$(echo $ID |  tr '[:upper:]' '[:lower:]' )"'"}'
+}
+
+status
+
+while true; do
+    status
+    notify
+    sleep $UPDATE
+done

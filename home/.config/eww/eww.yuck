@@ -1,0 +1,63 @@
+(include "variables.yuck")
+(include "windows.yuck")
+
+; TODO rename btn-txt to btn
+(defwidget btn [onclick tooltip ?icon ?text ?onrightclick ?class ?active]
+  (eventbox
+    :cursor {active == "" || active ? "hand" : "default"}
+    (button :class "${class}"
+            :timeout "2s"
+            :active {active == "" || active ? "true" : "false"}
+            :onclick "${onclick}"
+            :onrightclick "${onrightclick}"
+            :tooltip {tooltip}
+      (box
+        :orientation "horizontal"
+        :space-evenly "false"
+        {icon}
+        (label :text {text} :limit-width 25)
+      ))
+    )
+  )
+
+(defwidget btn-icon [icon onclick tooltip ?onrightclick ?class ?active]
+  (eventbox
+    :cursor {active == "" || active ? "hand" : "default"}
+    (button :class "${class}"
+            :timeout "2s"
+            :active {active == "" || active ? "true" : "false"}
+            :onclick "${onclick}"
+            :onrightclick "${onrightclick}"
+            :tooltip {tooltip}
+      {icon}
+      )
+    )
+  )
+; modules
+(include "modules/clock.yuck")
+(include "modules/workspaces.yuck")
+(include "modules/battery.yuck")
+(include "modules/network.yuck")
+(include "modules/daynight.yuck")
+(include "modules/gpu.yuck")
+(include "modules/todos.yuck")
+(include "modules/pomo.yuck")
+(include "modules/bluetooth.yuck")
+(include "modules/scaler.yuck")
+(include "modules/music-popup.yuck")
+(include "modules/open-dock.yuck")
+
+; (include "modules/wifi.yuck")
+(include "modules/music.yuck")
+
+; windows
+(include "windows/bar.yuck")
+(include "windows/music.yuck")
+(include "windows/volume.yuck")
+(include "windows/brightness.yuck")
+(include "windows/dock.yuck")
+(include "windows/wlan.yuck")
+(include "windows/swaymode.yuck")
+
+; notification (end-rs)
+(include "end.yuck")

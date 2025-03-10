@@ -1,0 +1,7 @@
+(defwidget music-window []
+  (box
+    :class "music-window"
+    :space-evenly false
+    (music)
+    )
+  )

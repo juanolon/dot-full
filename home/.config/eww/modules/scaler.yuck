@@ -1,0 +1,23 @@
+(defwidget scaler [class value change icon ?active]
+  (box :class "${class}"
+    (overlay
+      (box
+        :class "${class}-inner"
+        (scale
+          :min 0
+          :max 100
+          :value {value}
+          :orientation "h"
+          :flipped false
+          :onchange {change}
+          :active {active ?: "true"}
+          )
+        )
+      (label
+        :halign "start"
+        :valign "center"
+        :text {icon}
+        )
+      )
+    )
+  )

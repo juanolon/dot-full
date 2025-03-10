@@ -1,0 +1,32 @@
+(defwidget bar []
+  (centerbox :class "barr" :orientation "h"
+    (box :orientation "h" :space-evenly false :halign "start" :hexpand "true"
+      (box :class "bar-block" :space-evenly false
+        (open-dock)
+        )
+      ; (daynight)
+      (box :class "bar-block" :space-evenly false
+        (gpu)
+        (pomo)
+        (todos-bar)
+        (music-module)
+        )
+      )
+    (box :orientation "h" :space-evenly false :halign "center" :hexpand "true"
+      (workspaces)
+      )
+    (box :orientation "h" :space-evenly false :halign "end" :hexpand "true"
+      (box :class "bar-block" :space-evenly false
+        (network)
+        (label :text "|")
+        (bluetooth)
+        )
+      (box :class "bar-block" :space-evenly false
+        (batteries)
+        )
+      (box :class "bar-block" :space-evenly false
+        (clock)
+        )
+      )
+    )
+  )

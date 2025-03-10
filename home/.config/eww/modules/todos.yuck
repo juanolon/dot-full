@@ -1,0 +1,55 @@
+(defwidget todos-bar []
+  (button
+    :onclick "kitty -e nvim $(zk list --format {{abs-path}} --sort created --limit 1 --quiet \"$ZK_NOTEBOOK_DIR/todos\")"
+    :tooltip "${todos.count} TODOs"
+    ; TODO use an icon instead of todos
+    (label :class "todos-bar" :text "${todos.count} todos")
+    )
+  )
+
+(defwidget todo [name done]
+  (box
+    :class "todo"
+    (checkbox
+      :checked "${done}"
+      :onchecked "scripts/notes ${done ? 'undone' : 'done'} '${name}'"
+      :onunchecked "scripts/notes ${done ? 'done' : 'undone'} '${name}'"
+      (label :text {name} :limit-width 50)
+      )
+    )
+  )
+
+(defwidget todos [title list path]
+  (box
+    :class "todos"
+    :orientation "vertical"
+    :space-evenly "false"
+    (button
+      :onclick "kitty -e nvim '${path}'"
+      (label :text {title} :xalign "0"))
+    (for entry in {list}
+      (todo :name {entry.name} :done {entry.done})
+      )
+    )
+  )
+
+
+; TODO show empty case
+(defwidget todos-list []
+  (box :class "todos-list"
+    :orientation "vertical"
+    :space-evenly "false"
+    (label :xalign "0"
+      :text "${todos.count} TODO:")
+    (scroll :vscroll "true"
+      :class "list"
+      (box
+        :space-evenly "false"
+        :orientation "vertical"
+        (for entry in {todos.todos}
+          (todos :title {entry.title} :list {entry.todos} :path {entry.path})
+          )
+        )
+      )
+    )
+  )

@@ -1,0 +1,87 @@
+#!/bin/bash
+# Change screen temperature depending on dawn/dusk time
+
+TEMP_DAY=6500
+TEMP_NIGHT=3800
+
+DAWN_TIME=$((9 * 3600))  # 9:00 in seconds since the start of the day
+DUSK_TIME=$((19 * 3600)) # 19:00 in seconds since the start of the day
+WINDOW=$((15 * 60))      # 15 minutes in seconds
+
+PID_FILE="/tmp/screen_temp_pid.txt"
+
+mk_time() {
+    # Strip leading zeros to avoid base errors
+    local hours=$((10#$1))
+    local minutes=$((10#$2))
+    local seconds=$((10#${3:-0}))
+    echo $((hours * 3600 + minutes * 60 + seconds))
+}
+
+adjust_temperature() {
+    while true; do
+        now=$(date +%s)
+        current_time=$(mk_time "$(date -u -d @$now +%H)" "$(date -u -d @$now +%M)" "$(date -u -d @$now +%S)")
+
+        if [ $((DAWN_TIME - WINDOW)) -lt "$current_time" ] && [ "$current_time" -lt "$DAWN_TIME" ]; then
+            temp=$(( (DAWN_TIME - current_time) * (TEMP_NIGHT - TEMP_DAY) / WINDOW + TEMP_DAY ))
+        elif [ $((DUSK_TIME - WINDOW)) -lt "$current_time" ] && [ "$current_time" -lt "$DUSK_TIME" ]; then
+            temp=$(( (DUSK_TIME - current_time) * (TEMP_DAY - TEMP_NIGHT) / WINDOW + TEMP_NIGHT ))
+        elif [ "$current_time" -ge "$DUSK_TIME" ] || [ "$current_time" -lt "$DAWN_TIME" ]; then
+            temp=$TEMP_NIGHT
+        else
+            temp=$TEMP_DAY
+        fi
+
+        busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q "$temp"
+        sleep $WINDOW
+    done
+}
+
+start_process() {
+    if [ -f "$PID_FILE" ]; then
+        echo "Process is already running with PID $(cat $PID_FILE)"
+        exit 1
+    fi
+
+    adjust_temperature &  # Run in background
+    echo $! > "$PID_FILE"
+    echo "Background process started with PID $(cat $PID_FILE)"
+}
+
+stop_process() {
+    if [ ! -f "$PID_FILE" ]; then
+        echo "No background process found."
+        exit 1
+    fi
+
+    kill "$(cat "$PID_FILE")"
+    rm "$PID_FILE"
+    echo "Background process stopped."
+}
+
+status() {
+    if [ -f "$PID_FILE" ]; then
+        echo "running"
+    else
+        echo "stopped"
+    fi
+}
+
+case "$1" in
+    status)
+        status
+        ;;
+    start)
+        start_process
+        eww update auto_dawn=$(status)
+        ;;
+    stop)
+        stop_process
+        eww update auto_dawn=$(status)
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac

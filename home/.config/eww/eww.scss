@@ -1,0 +1,156 @@
+@import "./colors-rose-pine";
+
+* {
+  all: unset;
+  font-family: "JetbrainsMono Nerd Font";
+  font-size: 15px;
+  color: $font-color;
+  border: none;
+}
+
+tooltip {
+  background-color: $base;
+  color: $font-color;
+}
+
+.bar {
+  min-height: 25px;
+}
+
+// START original
+
+// @mixin window {
+//   border: 1px solid $overlay;
+//   background-color: $base;
+//   color: $text;
+//   border-radius: 1rem;
+//   padding: 1rem;
+//   margin: 0.5rem 1rem;
+// }
+
+// @mixin widget {
+//   margin-top: 6px;
+//   margin-bottom: 6px;
+//   margin-left: 8px;
+//   padding: 0 9px 0 9px;
+//   border-radius: 15px;
+//   background: $overlay;
+//
+//   min-height: 25px;
+// }
+
+// .barr {
+//   background: $base;
+//   border: solid $overlay;
+//   border-width: 0 2px 2px 2px;
+//   border-radius: 0 0 20px 20px;
+//   margin: 0 10px;
+// }
+
+// END original
+
+// START floating
+@mixin widget {
+  background: $overlay;
+
+  min-height: 25px;
+}
+
+.barr {
+  // margin: 0 10px;
+  margin-right: 8px;
+}
+
+
+.bar-block {
+  margin-top: 0px;
+  margin-bottom: 1px;
+  margin-left: 8px;
+
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: 5px solid $base;
+  background: $overlay;
+  box-shadow: 3px 3px $subtle;
+
+  min-height: 25px;
+}
+
+@mixin window {
+  color: $text;
+  padding: 1rem;
+  margin: 0.5rem 1rem;
+
+  border-radius: 5px;
+  border: 5px solid $base;
+  background: $overlay;
+  box-shadow: 3px 3px $subtle;
+
+  border: 1px solid $subtle;
+}
+
+// END floating
+
+@mixin rounding {
+  border-radius: 16px;
+}
+
+.btn {
+  padding: 10px 13px 10px 13px;
+  margin: 4px;
+  background: $overlay;
+  border: solid $overlay;
+  border-width: 1px 0 0 1px;
+  border-radius: 10px;
+
+  label {
+    font-size: 1.3em;
+  }
+
+
+  &:hover {
+    background: $overlay;
+    box-shadow: inset -3px -3px $subtle;
+    border: solid $subtle;
+    border-width: 1px 0 0 1px;
+  }
+
+  &:active {
+    box-shadow: 3px 3px $subtle;
+  }
+
+  &.active {
+    box-shadow: inset -3px -3px $subtle;
+    border: solid $subtle;
+    border-width: 1px 0 0 1px;
+  }
+
+  &:disabled {
+    background: $muted;
+  }
+}
+
+
+
+
+@import "scss/workspaces.scss";
+@import "scss/battery.scss";
+@import "scss/network.scss";
+@import "scss/clock.scss";
+@import "scss/daynight.scss";
+@import "scss/gpu.scss";
+@import "scss/todos.scss";
+@import "scss/pomo.scss";
+@import "scss/music.scss";
+@import "scss/bluetooth.scss";
+@import "scss/open-dock.scss";
+
+@import "scss/music-window.scss";
+@import "scss/volume-window.scss";
+@import "scss/brightness-window.scss";
+@import "scss/dock.scss";
+@import "scss/wlan.scss";
+@import "scss/swaymode.scss";
+
+// notifications (end-rs)
+@import "end.scss";

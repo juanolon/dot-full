@@ -1,0 +1,89 @@
+; TODO initialize all variables to their correct value structure
+; TODO toggle value on click. no need to poll
+
+;; DAYNIGHT
+(defpoll daynight
+  :initial '{"class": "day", "text": "", "tooltip": " day", "alt": "day"}'
+  :interval "5s"
+  'day-night status')
+
+;; GPU
+(defvar gpu '{"alt": "noconnection","class": "noconnection", "text": "No connection", "tooltip": "No connection", "icon": ""}')
+; (defpoll gpu :interval "5s"
+;   :initial '{"alt": "noconnection","class": "noconnection", "text": "No connection", "tooltip": "No connection", "icon": ""}'
+;   'scripts/genesis')
+
+;; NOTES
+(defpoll todos :interval "10s"
+  :initial '{"todos":[], "count": 0}'
+  'scripts/notes')
+
+;; POMODORO
+(defvar show_pomo false)
+(defpoll pomo :interval "1s"
+  :initial '{"class": "finished", "text": "00:00 - Time is up!", "tooltip": "Today 0. Session: 0", "icon":""}'
+  :run-while show_pomo
+  'scripts/pomo status')
+
+;; MUSIC
+(defpoll music_on :interval "1s"
+  :initial "false"
+  "scripts/music-status status")
+(deflisten music
+  :initial '{"artist":"","album":"","title":"","status":"","position":0,"position_time":"00:00","length":"00:00"}'
+  "scripts/music-status")
+(deflisten music_cover "scripts/music-status cover")
+
+
+;; WIFI
+(defvar run_counter false)
+(defpoll counter
+  :interval "50ms"
+  :run-while run_counter
+  :initial 0
+  "scripts/counter get 50")
+
+(defpoll wifi_on
+  :interval "1s"
+  :initial "false"
+  'scripts/wlan wifi-status')
+
+(deflisten network :initial "{}" "scripts/wlan status")
+
+;; BATTERY
+(deflisten bat0
+  :initial '{"icon": "", "percentage": 0, "status": "unplugged", "time": "", "id": "bat0"}'
+  "scripts/battery BAT0")
+(deflisten bat1
+  :initial '{"icon": "", "percentage": 0, "status": "unplugged", "time": "", "id": "bat0"}'
+  "scripts/battery BAT1")
+
+;; VOLUME/BRIGHTNESS
+; TODO deflisten run-while?
+(defvar show_volume true)
+(defvar show_brt true)
+(defpoll auto_dawn
+  :interval "10s"
+  :initial "stopped"
+  "scripts/dawn-temperature status"
+  )
+; TODO add bar for microphone
+(deflisten vol
+  :initial '{"icon": "", "percent": 50, "microphone": 50, "ismute": false}'
+  "scripts/volume")
+(deflisten brt
+  :initial '{"level": 100, "icon": ""}'
+  "scripts/brightness")
+(deflisten gamma_temp
+  :initial '{"temperature": 50, "gamma": 50}'
+  "scripts/brightness gamma-temp-status"
+  )
+
+
+;; BLUETOOTH
+(deflisten bluetooth
+  :initial '{ "icon": "󰂯", "batt_icon": "", "text": "Disconnected"}'
+  "scripts/bluetooth")
+
+;; DOCK
+(defvar docked false)

@@ -1,0 +1,124 @@
+#!/bin/bash
+
+# Function to send notifications
+notify() {
+    notify-send "Monitor Manager" "$1"
+}
+
+# Function to get the list of monitors and their status
+get_monitors() {
+    swaymsg -t get_outputs | jq -c '.[] | {name: .name, id: .id, active: .active}'
+}
+
+# Function to set the primary monitor
+set_primary_monitor() {
+    local monitor_id=$1
+    notify "Monitor $monitor_id set as primary"
+}
+
+# Function to enable a monitor
+enable_monitor() {
+    local monitor_id=$1
+    swaymsg output "$monitor_id" enable
+    set_primary_monitor "$monitor_id"
+    # reload_eww_bar
+    notify "Monitor $monitor_id enabled"
+}
+
+# Function to disable a monitor
+disable_monitor() {
+    local monitor_id=$1
+    swaymsg output "$monitor_id" disable
+    local laptop_monitor=$(swaymsg -t get_outputs | jq -r '.[] | select(.name | contains("eDP")) | .name')
+    set_primary_monitor "$laptop_monitor"
+    # reload_eww_bar
+    notify "Monitor $monitor_id disabled"
+}
+
+# Function to toggle a monitor
+toggle_monitor() {
+    local monitor_id=$1
+    swaymsg output "$monitor_id" toggle
+    if swaymsg -t get_outputs | jq -r --arg id "$monitor_id" '.[] | select(.name == $id) | .active'; then
+        set_primary_monitor "$monitor_id"
+    else
+        local laptop_monitor=$(swaymsg -t get_outputs | jq -r '.[] | select(.name | contains("eDP")) | .name')
+        set_primary_monitor "$laptop_monitor"
+    fi
+    # reload_eww_bar
+    notify "Monitor $monitor_id toggled"
+}
+
+# Function to move a monitor relative to the main display
+move_monitor() {
+    local monitor_id=$1
+    local position=$2
+    local main_display=$(swaymsg -t get_outputs | jq -r '.[] | select(.primary == true) | .name')
+    local main_width=$(swaymsg -t get_outputs | jq -r --arg name "$main_display" '.[] | select(.name == $name) | .rect.width')
+    local main_height=$(swaymsg -t get_outputs | jq -r --arg name "$main_display" '.[] | select(.name == $name) | .rect.height')
+
+    case $position in
+        left)
+            swaymsg output "$monitor_id" pos -"$main_width" 0
+            notify "Monitor $monitor_id moved to the left of $main_display"
+            ;;
+        right)
+            swaymsg output "$monitor_id" pos "$main_width" 0
+            notify "Monitor $monitor_id moved to the right of $main_display"
+            ;;
+        top)
+            swaymsg output "$monitor_id" pos 0 -"$main_height"
+            notify "Monitor $monitor_id moved to the top of $main_display"
+            ;;
+        *)
+            echo "Invalid position. Use 'left', 'right', or 'top'."
+            exit 1
+            ;;
+    esac
+}
+
+# Function to reload the EWW bar on the primary monitor
+# reload_eww_bar() {
+#     local primary_monitor=$(swaymsg -t get_outputs | jq -r '.[] | select(.primary == true) | .name')
+#     eww open bar
+#     notify "EWW bar reloaded on $primary_monitor"
+# }
+
+# Main script logic
+case $1 in
+    list)
+        get_monitors
+        ;;
+    enable)
+        if [ -z "$2" ]; then
+            echo "Monitor ID is required."
+            exit 1
+        fi
+        enable_monitor "$2"
+        ;;
+    disable)
+        if [ -z "$2" ]; then
+            echo "Monitor ID is required."
+            exit 1
+        fi
+        disable_monitor "$2"
+        ;;
+    toggle)
+        if [ -z "$2" ]; then
+            echo "Monitor ID is required."
+            exit 1
+        fi
+        toggle_monitor "$2"
+        ;;
+    move)
+        if [ -z "$2" ] || [ -z "$3" ]; then
+            echo "Monitor ID and position are required."
+            exit 1
+        fi
+        move_monitor "$2" "$3"
+        ;;
+    *)
+        echo "Usage: $0 {list|enable <monitor_id>|disable <monitor_id>|toggle <monitor_id>|move <monitor_id> <left|right|top>}"
+        exit 1
+        ;;
+esac

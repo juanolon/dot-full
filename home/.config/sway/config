@@ -1,0 +1,395 @@
+include colorscheme
+set $mod Mod4
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# set $base00 #101218
+# set $base01 #1f222d
+# set $base02 #252936
+# set $base03 #7780a1
+# set $base04 #C0C5CE
+# set $base05 #d1d4e0
+# set $base06 #C9CCDB
+# set $base07 #ffffff
+# set $base08 #ee829f
+# set $base09 #f99170
+# set $base0A #ffefcc
+# set $base0B #a5ffe1
+# set $base0C #97e0ff
+# set $base0D #97bbf7
+# set $base0E #c0b7f9
+# set $base0F #fcc09e
+# set $border #f99157
+
+include ./theme/rose-pine-dawn
+
+# class                 | border     │ background    │ text     | indicator
+client.focused            $gold         $gold         $base     $gold
+client.focused_inactive   $rose         $overlay      $text     $overlay
+client.unfocused          $base         $overlay      $text     $overlay
+client.urgent             $love         $love         $text     $love
+
+# hide_edge_borders both
+workspace_auto_back_and_forth yes
+focus_on_window_activation urgent
+focus_follows_mouse no
+default_border pixel
+
+# font pango:DejaVu Sans Mono 10
+font Geist Mono 10
+
+# start a terminal
+set $term kitty
+bindsym $mod+Return exec $term
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+
+# panic mode. kill windows server
+bindsym $mod+Shift+p exec killall x-window-manager
+
+set $mode_bin ~/.config/eww/scripts/swaymode
+set $eww eww
+
+set $menu albert show "apps "
+bindsym $mod+space exec $menu
+# bindsym $mod+shift+p exec onagre "pass "
+#  -kb-accept-custom: add custom enter
+bindsym $mod+c exec albert show "= "
+# bindsym $mod+u exec albert show "uni "
+
+# bindsym $mod+c exec onagre -m "="
+bindsym $mod+u exec onagre -m "uni"
+
+# MAPS {{{
+exec_always "pkill -f 'python3? .+/swaymonad.py';  ~/.config/sway/swaymonad/swaymonad.py"
+bindsym $mod+s nop promote_window
+
+bindsym $mod+j nop focus_next_window
+bindsym $mod+k nop focus_prev_window
+bindsym $mod+h focus left
+bindsym $mod+l focus right
+
+bindsym $mod+Shift+h nop move left
+bindsym $mod+Shift+j nop move down
+bindsym $mod+Shift+k nop move up
+bindsym $mod+Shift+l nop move right
+
+# bindsym $mod+Shift+j nop swap_with_next_window
+# bindsym $mod+Shift+k nop swap_with_prev_window
+
+bindsym $mod+x nop reflectx
+bindsym $mod+y nop reflecty
+bindsym $mod+t nop transpose
+
+bindsym $mod+f nop fullscreen
+
+bindsym $mod+equal nop increment_masters
+bindsym $mod+minus nop decrement_masters
+
+
+mode "resize" {
+  bindsym Left resize shrink width 10px
+  bindsym Down resize grow height 10px
+  bindsym Up resize shrink height 10px
+  bindsym Right resize grow width 10px
+
+  bindsym Shift+Left nop resize_master shrink width 10px
+  bindsym Shift+Down nop resize_master grow height 10px
+  bindsym Shift+Up nop resize_master shrink height 10px
+  bindsym Shift+Right nop resize_master grow width 10px
+
+  # bindsym n resize set width (n-1/n)
+  # bindsym 2 resize set width 50ppt  # 1/2, 1/2
+  # bindsym 3 resize set width 66ppt  # 2/3, 1/3
+  # bindsym 4 resize set width 75ppt  # 3/4, 1/4
+
+  bindsym Shift+2 nop resize_master set width 50ppt
+  bindsym Shift+3 nop resize_master set width 66ppt
+  bindsym Shift+4 nop resize_master set width 75ppt
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+set $mode_layout (t) tall, (3) 3 columns, (n) Nop
+mode "layout" {
+    bindsym t nop set_layout tall, mode "default"; exec $mode_bin close
+    bindsym 3 nop set_layout 3_col, mode "default"; exec $mode_bin close
+    bindsym n nop set_layout nop, mode "default"; exec $mode_bin close
+
+    bindsym Return mode "default"; exec $mode_bin close
+    bindsym Escape mode "default"; exec $mode_bin close
+    bindsym $mod+e mode "default"; exec $mode_bin close
+}
+bindsym $mod+e mode "layout"; exec $mode_bin layout
+
+set $mode_dock (t) tall, (3) 3 columns, (n) Nop
+mode "dock" {
+    bindsym Return exec "$HOME/.config/eww/scripts/dock toggle"
+    bindsym Escape exec "$HOME/.config/eww/scripts/dock toggle"
+    bindsym $mod+d exec "$HOME/.config/eww/scripts/dock toggle"
+}
+bindsym $mod+d exec "$HOME/.config/eww/scripts/dock toggle"
+
+set $mode_music (p) previous, (n) next, (space) toggle
+mode "music" {
+    bindsym $mod+p exec "$HOME/.config/eww/scripts/music-controls prev"
+    bindsym $mod+n exec "$HOME/.config/eww/scripts/music-controls next"
+    bindsym $mod+space exec "$HOME/.config/eww/scripts//music-controls toggle-play"
+
+    bindsym Return exec "$eww close music"; mode "default"
+    bindsym Escape exec "$eww close music"; mode "default"
+    bindsym $mod+m exec "$eww close music"; mode "default"
+}
+bindsym $mod+m exec "$eww open music"; mode "music"
+
+mouse_warping container
+focus_wrapping no
+
+# reload the configuration file
+bindsym $mod+Shift+r exec swaymsg reload
+bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway?' -b 'Yes, exit sway' 'swaymsg exit'"
+
+bindsym $mod+n workspace next
+bindsym $mod+p workspace prev
+bindsym $mod+Tab workspace back_and_forth
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+# }}}
+
+# # MODE DISPLAY
+# set $mode_display (h) HDMI ON, (v) VGA, (i) DVI, (d) DisplayPort, (o) Extern OFF -- (s) Split, (j) Join
+# set $polybar $HOME/.config/polybar/launch.sh
+# set $display $HOME/.config/i3/scripts/display
+# mode "$mode_display" {
+#     bindsym h exec $display enable HDMI-2 && $polybar attach HDMI-2 && set $cur_mon HDMI-2, mode "default"
+#     bindsym i exec $display enable DP-2-2 && $polybar attach DP-2-2, mode "default"
+#     bindsym v exec $display enable VGA-1  && $polybar attach VGA-1, mode "default"
+#     bindsym d exec $display enable DP-2-2 && $polybar attach DP-2-2, mode "default"
+#     bindsym o exec $display disable && $polybar detach, mode "default"
+#
+#     bindsym s exec $display split && $polybar init, mode "default"
+#     bindsym j exec $display join && $polybar init, mode "default"
+#
+#     # back to normal: Enter or Escape
+#     bindsym Escape mode "default"
+#     bindsym $mod+x mode "default"
+# }
+# bindsym $mod+x mode "$mode_display"
+
+workspace 1 output eDP-1
+workspace 2 output eDP-1
+workspace 3 output eDP-1
+workspace 4 output eDP-1
+
+set $mode_docked Docked (d) Undocked, (u)
+# mode "$mode_docked" {
+#     bindsym d exec ~/.config/i3/scripts/dock, mode "default"
+#     bindsym u exec ~/.config/i3/scripts/undock, mode "default"
+
+#     bindsym Escape mode "default"
+# }
+# bindsym $mod+d mode "$mode_docked"
+# bindsym $mod+Shift+d exec ~/.config/i3/scripts/undock
+
+# MODE SYSTEM
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+set $Locker sleep 0.2 && ~/.bin/lock-screen
+mode "$mode_system" {
+    bindsym l exec $Locker, mode "default"; exec $mode_bin close
+    bindsym e exec swaymsg exit, mode "default"; exec $mode_bin close
+    bindsym s exec $Locker && systemctl suspend, mode "default"; exec $mode_bin close
+    bindsym h exec $Locker && systemctl hibernate, mode "default"; exec $mode_bin close
+    bindsym r exec systemctl reboot, mode "default"; exec $mode_bin close
+    bindsym Shift+s exec systemctl poweroff -i, mode "default"; exec $mode_bin close
+
+    bindsym Escape mode "default"; exec $mode_bin close
+}
+bindsym $mod+Escape mode "$mode_system"; exec $mode_bin system
+
+# MODE BROGUE
+set $mode_brogue (r) run, (s) seed
+set $BrogueTerm st -c "brogue" -f "DejaVu Sans Mono:pixelsize=25:antialias=true:autohint=true" -g '100x34'
+mode "$mode_brogue" {
+    bindsym r exec $BrogueTerm brogue, mode "default"
+    bindsym s exec $BrogueTerm brogue -s $(zenity --text "Enter Game Seed" --entry), mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+Shift+b mode "default"
+}
+bindsym $mod+Shift+b mode "$mode_brogue"
+
+# MODE SCREENSHOT
+set $mode_screenshot (f) full, (a) area, (w) window (uppercase -> save)
+mode "$mode_screenshot" {
+    bindsym f exec grimshot --notify copy screen, mode "default"; exec $mode_bin close
+    bindsym a exec grimshot --notify copy area, mode "default"; exec $mode_bin close
+    bindsym w exec grimshot --notify copy window, mode "default"; exec $mode_bin close
+
+    bindsym Shift+f exec grimshot save screen, mode "default"; exec $mode_bin close
+    bindsym Shift+a exec grimshot save area, mode "default"; exec $mode_bin close
+    bindsym Shift+w exec grimshot save window, mode "default"; exec $mode_bin close
+
+    bindsym Return mode "default"; exec $mode_bin close
+    bindsym Escape mode "default"; exec $mode_bin close
+    bindsym $mod+Shift+s mode "default"; exec $mode_bin close
+}
+bindsym $mod+Shift+s mode "$mode_screenshot"; exec $mode_bin screenshot
+# }}}
+
+
+# SCRATCHPAD {{{
+bindsym $mod+Shift+m move scratchpad
+bindsym $mod+o scratchpad show
+
+# spotify on scratchpad
+# for_window [class="Spotify"] mark "music", move scratchpad; move position left
+# for_window [class="Spotify"] exec "sleep .1; pkill -RTMIN+4 waybar"
+# bindsym $mod+Shift+m [con_mark="music"] scratchpad show
+assign [app_id="spotify"] workspace 
+# rename workspace 100 to ""
+workspace 100:
+# bindsym $mod+Shift+m workspace number 100
+
+# toggle tiling / floating. aka remove from scratchpad
+bindsym $mod+Shift+o floating toggle
+# change focus between tiling / floating windows
+bindsym $mod+Shift+f focus mode_toggle
+# }}}
+
+# BINDINGS {{{
+bindsym XF86MonBrightnessUp exec sudo screen-backlight up
+bindsym Shift+XF86MonBrightnessUp exec sudo screen-backlight max
+bindsym Shift+XF86MonBrightnessDown exec sudo screen-backlight min
+bindsym XF86MonBrightnessDown exec sudo screen-backlight down
+
+# fn+space
+bindsym XF86KbdBrightnessUp exec sudo keyboard-backlight up
+bindsym XF86KbdBrightnessDown exec sudo keyboard-backlight down
+
+# volume keys
+bindsym XF86AudioRaiseVolume exec /home/juanolon/.bin/volume up
+bindsym XF86AudioLowerVolume exec /home/juanolon/.bin/volume down
+bindsym XF86AudioMute exec /home/juanolon/.bin/volume mute
+bindsym XF86AudioMicMute exec /home/juanolon/.bin/volume nomic
+
+# F7: screenshot
+bindsym XF86Display exec grimshot --notify save output
+
+# F8: reserved for WLAN toggle
+# bindsym XF86WLAN exec ~/.bin/rofi-wifi
+
+# F9: display screenshot
+# bindsym XF86Tools exec eww open --toggle dock
+
+# F10: reserved for bluetooth toggle
+# bindsym XF86Bluetooth exec ~/.config/polybar/rofi-bluetooth
+
+# F11: previous (keycode: 374)
+# TODO better use
+bindsym XF86Keyboard exec albert toggle
+
+# F12:
+bindsym XF86Favorites exec albert show "pass "
+
+# Home (0xff50), End (0xff57), Insert (0xff63)
+bindsym Home exec dunstify "Home"
+bindsym Insert exec dunstify "Insert"
+bindsym End exec dunstify "End"
+# }}}
+
+# APPS {{{
+bindsym $mod+v exec pavucontrol
+
+for_window [class="brogue"] floating enable
+for_window [class="bluetoothctl"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [title="^Onagre$"] {
+    floating enable
+    border none
+}
+# }}}
+
+
+# handle sudo permissions
+# exec_always /home/juanolon/.bin/mount_notes
+# exec_always ~/.config/i3/autostart
+
+# disable laptop display, when lid is closed
+exec_always ~/.config/sway/scripts/lid-open
+# bindswitch --reload --locked lid:on exec "[ $(swaymsg -t get_outputs | jq '. | length') -gt 1 ] && swaymsg output eDP-1 disable"
+# bindswitch --reload --locked lid:off output eDP-1 enable
+
+exec swayidle -w \
+         timeout 300 $Locker \
+         timeout 600 'swaymsg "output * dpms off"' \
+         resume 'swaymsg "output * dpms on"' \
+         after-resume 'swaymsg "output * enable"'
+         # before-sleep 'swaylock --hide-keyboard-layout -f -c 000000 -i $lock_bg'
+
+input "2:7:SynPS/2_Synaptics_TouchPad" {
+    dwt enabled
+    tap enabled
+    middle_emulation enabled
+}
+
+input "type:keyboard" {
+    # source: .config/xkb/symbols/us-german-umlaut
+    # see also: /usr/share/X11/xkb/symbols/us
+    xkb_layout us-german-umlaut
+    xkb_options "ctrl:nocaps"
+    # switch alt / altgr
+    # xkb_options "lv3:alt_switch"
+}
+
+input type:touchpad {
+    # note that DWT only works for internal touchpads (see libinput issue #524)
+    dwt enabled
+    tap enabled
+    # natural_scroll enabled
+    middle_emulation enabled
+}
+
+set $wallpapers_path ~/Pictures/backgrounds
+output "*" bg `find $wallpapers_path -type f | shuf -n1` fill
+
+gaps outer -25
+gaps inner 10
+default_border pixel 3
+default_floating_border normal
+
+# exec nm-applet --indicator
+# exec blueman-applet
+exec udiskie --notify
+exec_always albert
+exec_always /home/juanolon/.bin/notes_server
+exec wl-gammarelay-rs
+exec scripts/start_eww
+# exec eww daemon
+
+include /etc/sway/config.d/*

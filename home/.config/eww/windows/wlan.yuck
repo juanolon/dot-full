@@ -1,0 +1,84 @@
+(defwidget wlan-entry [ssid connected icon]
+  (box
+    :class "entry"
+    :space-evenly false
+    (label :text {icon} :class "icon")
+    (button
+      :hexpand "true"
+      (label :text {ssid} :limit-width 50 :xalign "0")
+      )
+    (button
+      :class "connect"
+      :timeout "1s"
+      :onclick {!connected ?
+                  "scripts/wlan connect '${ssid}' && scripts/wlan refresh" :
+                  "scripts/wlan disconnect '${ssid}' && scripts/wlan refresh"
+      }
+      (label :text {connected ? "disco" : "conn"}))
+    )
+  )
+
+
+(defvar wifis '[]')
+
+(defvar wlan_loading false)
+
+(defwidget wlan-list []
+  (box
+    :class "wlan-list"
+    :space-evenly false
+      :orientation "vertical"
+    (box
+      :class "emptylist"
+      :orientation "vertical"
+      :space-evenly "false"
+      ; :visible {arraylength(wifis) == 0}
+      :visible {run_counter || arraylength(wifis) == 0}
+      (label :text {wifi_on ? "WIFIs list is empyt. Update?" : "WIFI is off"})
+      (progress
+        :value {counter}
+        :visible {run_counter}
+        :class "loading"
+        :orientation "horizontal"
+        )
+      )
+    (scroll :vscroll "true"
+            :class "list"
+            :visible {!run_counter && arraylength(wifis) > 0}
+      (box
+        :space-evenly "false"
+        :orientation "vertical"
+        (for entry in {wifis}
+          (wlan-entry
+            :ssid {entry.ssid}
+            :connected {entry.active}
+            :icon {entry.icon}
+            )
+          )
+        )
+      )
+    (box
+      :class "bottom-btn"
+      :orientation "horizontal"
+      (btn
+        :onclick {wifi_on ?
+          "scripts/wlan toggle && ${EWW_CMD} update wifis='[]'" :
+          "${EWW_CMD} update run_counter='true' && scripts/wlan toggle && scripts/wlan refresh"
+        }
+        :tooltip {wifi_on ? "Disable WLAN" : "Enable WLAN"}
+        :icon {wifi_on ? "󰖪" : "󰖩"}
+        )
+      ;  󱚾 
+      (btn
+        :onclick "nm-connection-editor"
+        :tooltip "Edit connections"
+        :icon "󱚾")
+      ; 󰑐 
+      (btn
+        :active {!run_counter && wifi_on}
+        :onclick "${EWW_CMD} update wifis='[]' && scripts/wlan refresh"
+        :tooltip "Refresh"
+        :icon "󱛄")
+      )
+    )
+)

@@ -1,0 +1,27 @@
+@import "./themes/rose-pine-dawn";
+
+$font-color: $text;
+$network: $overlay;
+$clock: $overlay;
+$battery: $overlay;
+/* battery status: */
+$battery-charging: $gold;
+$battery-plugged: $foam;
+$battery-warning: $gold;
+$battery-critical: $love;
+/* daynight status: */
+$daynight-day: $gold;
+$daynight-night: $foam;
+/* pomo status: */
+$pomo: $base;
+$pomo-pause: $iris;
+$pomo-running: $iris;
+/* gpu status: */
+$gpu-running: $rose;
+$gpu-running-txt: $base;
+$workspaces: $base;
+$spotify: $pine;
+/* battery-mode status: */
+$battery-auto: $overlay;
+$battery-ac: $rose;
+$battery-bat: $foam;

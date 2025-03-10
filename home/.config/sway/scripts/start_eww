@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Make sure that the eww daemon is running
+eww daemon &> /dev/null
+while [ -z  $(eww ping 2> /dev/null) ]; do
+   sleep 0.2s
+done
+
+# Open window
+eww open bar &> /dev/null

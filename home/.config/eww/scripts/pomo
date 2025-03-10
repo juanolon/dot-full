@@ -1,0 +1,151 @@
+#!/bin/bash
+set -o noclobber # allow echo .. >| file
+
+MODE_FILE=/tmp/pomodoro-mode
+STATUS_FILE=${XDG_CACHE_HOME:-~}/.pomodoro-current
+# touch $MODE_FILE
+# touch $STATUS_FILE
+# create file if not exists
+if [ ! -f $MODE_FILE ]; then
+    echo "pause" >| $MODE_FILE
+fi
+
+MODE=$(cat $MODE_FILE)
+: ${MODE:="pause"}
+
+
+geticon() {
+    local mode=$(cat $MODE_FILE)
+    if [ $mode = "work" ]; then
+        icon=""
+    else
+        icon=""
+    fi
+    echo $icon
+}
+
+eww_update() {
+    eww update pomo="$(print_status)"
+    eww update show_pomo=$(is_finished && echo 'false' || echo 'true')
+}
+
+is_finished() {
+    pomodoro-cli status -f json | jq -e 'select(.tooltip == "Finished")' > /dev/null
+}
+
+reset_file() {
+    echo "$(date +%Y-%m-%d) 0 0" >| $STATUS_FILE
+}
+
+read_file() {
+    if [ ! -f $STATUS_FILE ]; then
+        reset_file
+    fi
+
+    read -r file_date counter1 counter2 < $STATUS_FILE
+}
+validate_date() {
+    current_date=$(date +%Y-%m-%d)
+    read_file
+
+    if [ "$file_date" != "$current_date" ]; then
+        reset_file
+        read_file
+    fi
+}
+
+inc_total_work() {
+    validate_date
+    counter1=$((counter1 + 1))
+    counter2=$((counter2 + 1))
+    echo "$file_date $counter1 $counter2" >| $STATUS_FILE
+}
+
+dec_total_work() {
+    validate_date
+    counter1=$((counter1 - 1))
+    counter2=$((counter2 - 1))
+    echo "$file_date $counter1 $counter2" >| $STATUS_FILE
+}
+
+reset_current_work () {
+    validate_date
+    echo "$file_date $counter1 0" >| $STATUS_FILE
+}
+
+print_status() {
+    TIMER=$(pomodoro-cli status -f json | jq -r '.text')
+    CLASS=$(pomodoro-cli status -f json | jq -r '.class')
+    # TEXT=$(pomodoro-cli status -f json | jq -r '.tooltip')
+    read_file
+
+    echo "{\"class\": \"$CLASS\", \"text\": \"$TIMER\", \"tooltip\": \"Today $counter1. Session: $counter2\", \"icon\":\"$(geticon)\"}"
+    # echo "{\"class\": [\"$CLASS\", \"$MODE\"], \"text\": \"$TIMER\", \"tooltip\": \"Today $counter1. Session: $counter2\", \"icon\":\"$icon\"}"
+    # echo "{\"class\": \"$CLASS\", \"text\": \"$TIMER\", \"tooltip\": \"$MODE: $TEXT\"}"
+    # {"text":"00:00 - Time is up!","tooltip":"Finished","class":"finished","percentage":0.0}
+    # pomodoro-cli status -f json
+}
+
+case $1 in
+    status)
+        print_status
+        ;;
+    show-timer)
+        # decides if the timer will be shown, otherwise only the icon is presented
+
+        ! is_finished
+        # exit_code=$?
+        ;;
+    toggle-mode)
+        # when the clock is running, then it stop the clock
+        # otherwise, it toggles the current mode
+        if is_finished; then
+            if [ $MODE = "work" ]; then
+                MODE="pause"
+            else
+                MODE="work"
+            fi
+            echo $MODE >| $MODE_FILE
+
+            # dunstify -r 394763 -t 1500 -u normal "Now will be $MODE"
+        else
+            # if we stop the current work timer, then the total should also decrease
+            if [ $MODE = "work" ]; then
+                dec_total_work
+            fi
+            pomodoro-cli stop
+        fi
+        eww_update
+        ;;
+    toggle-time)
+        # when the clock is running, then it pause the clock
+        # otherwise, it starts the clock depending on the current mode
+        if is_finished; then
+            if [ $MODE = "work" ]; then
+                pomodoro-cli start -d 25m --notify --message "Working"
+                inc_total_work
+            else
+                pomodoro-cli start -d 5m --notify --message "Chillen"
+                reset_current_work
+            fi
+        else
+            pomodoro-cli pause
+        fi
+        eww_update
+        ;;
+    # pause)
+    #     pomodoro-cli pause
+    #     pkill -RTMIN+8 waybar
+    #     ;;
+    # stop)
+    #     # if mode work and not finished, dec_total
+    #     pomodoro-cli stop
+    #     pkill -RTMIN+8 waybar
+    #     ;;
+    add)
+        pomodoro-cli --add 5m
+        ;;
+    *)
+        echo "Use: pomo up|down|max|min|off"
+        ;;
+esac

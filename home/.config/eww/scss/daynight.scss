@@ -1,0 +1,16 @@
+.daynight {
+  @include widget;
+
+  /* font-weight: bold; */
+  font-size: 18px;
+
+  &.day {
+    color: $daynight-day;
+    /* border: 1px solid @daynight-day; */
+  }
+
+  &.night {
+    color: $daynight-night;
+    /* border: 1px solid @daynight-night; */
+  }
+}

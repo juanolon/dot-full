@@ -1,0 +1,13 @@
+(defwidget batteries []
+  (box :space-evenly false
+  (battery :bat bat0)
+  (label :text "|")
+  (battery :bat bat1)
+    )
+  )
+
+(defwidget battery [bat]
+  (tooltip "Time: ${bat.time}"
+      (label :class "battery ${bat.status} ${bat.id}" :text "${bat.percentage}% ${bat.icon}")
+    )
+  )

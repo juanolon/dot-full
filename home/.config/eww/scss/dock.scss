@@ -1,0 +1,26 @@
+.dock {
+  color: $overlay;
+  margin: 0;
+
+  .floater {
+    @include window;
+  }
+
+  .pomo {
+    color: $iris;
+  }
+
+  .mute {
+    background: $rose;
+  }
+
+  .auto_dawn.running {
+    // background: $rose;
+
+    label {
+      color: $muted;
+    }
+
+    // background: $pine;
+  }
+}

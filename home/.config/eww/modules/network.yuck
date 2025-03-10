@@ -1,0 +1,13 @@
+(defwidget network []
+  (button
+    :class "network"
+    :timeout "2s"
+    :onclick "${EWW_CMD} update wifis='[]' && ${EWW_CMD} open --toggle wlan && scripts/wlan wifi-status | grep -e 'true' && eww active-windows | grep -e 'wlan' && scripts/wlan refresh"
+    :onrightclick "scripts/wlan toggle"
+    :tooltip "${network.essid}"
+    {wifi_on ?
+      "${network.essid} (${network.signal}%) ${network.icon} " :
+    "Disconnected"
+    }
+    )
+  )

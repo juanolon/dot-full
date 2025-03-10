@@ -1,0 +1,59 @@
+.wlan-list {
+  @include window;
+
+  .emptylist {
+    min-height: 200px;
+    min-width: 300px;
+    padding: 5px;
+
+    label {
+      min-height: 195px;
+    }
+  }
+
+  .list {
+    min-height: 200px;
+    padding: 5px;
+    background: $overlay;
+    min-width: 300px;
+
+    .entry {
+      padding: 5px;
+      margin: 3px;
+      background: $base;
+      border-radius: 5px;
+
+      label {
+        padding: 2px;
+        margin-bottom: 5px;
+      }
+
+      .icon {
+        padding: 4px;
+        margin-right: 10px;
+      }
+
+      .connect {
+        padding: 3px 3px 3px 10px;
+        border-left: 1px solid $text;
+      }
+    }
+  }
+
+  .loading {
+    min-height: 5px;
+
+    trough {
+      background: $overlay;
+      min-width: 100px;
+
+      progress {
+        background-image: linear-gradient(to right, $gold 30%, $rose 100%);
+      }
+    }
+  }
+
+  .bottom-btn {
+    margin-top: 10px;
+  }
+}

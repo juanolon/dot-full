@@ -1,0 +1,24 @@
+; TODO use another pomodoro timer? pomodoro-cli is to slow
+; TODO better state handling. it works now similar to the waybar version
+(defwidget pomo []
+  (box
+    :class "pomo"
+    :space-evenly "false"
+    :visible {show_pomo}
+    (button :class "icon ${pomo.class}" 
+            :timeout "1s"
+            :onclick "scripts/pomo toggle-time"
+            :onrightclick "scripts/pomo toggle-mode"
+            :tooltip "${pomo.tooltip}"
+      (label :text "${pomo.icon}")
+      )
+    (button :class "info ${pomo.class}"
+            :timeout "1s"
+            :onclick "scripts/pomo toggle-time"
+            :onrightclick "scripts/pomo toggle-mode"
+            :tooltip "${pomo.tooltip}"
+      (label :text "${pomo.text}")
+      )
+    )
+  )
+

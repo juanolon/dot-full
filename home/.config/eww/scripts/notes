@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+
+TODOS_DIR="$ZK_NOTEBOOK_DIR/todos"
+declare -A todos
+declare -A todos_done_status
+
+# Function to process each line of the input
+process_line() {
+    local line="$1"
+    if [[ "$line" =~ ^- ]]; then
+        # Extract full file path without suffix
+        current_file=$(echo "$line" | sed 's/- \(.*\)\.md/\1/')
+        todos["$current_file"]=""
+        todos_done_status["$current_file"]=""
+    elif [[ "$line" =~ ^[[:space:]]*-\ \[ ]] ; then
+        # Extract task
+        task=$(echo "$line" | sed 's/[[:space:]]*-\ \[.\] \(.*\)/\1/')
+        done_status=$(echo "$line" | grep -q "\[x\]" && echo "true" || echo "false")
+        if [[ -n "${todos[$current_file]}" ]]; then
+            todos["$current_file"]+="|$task"
+            todos_done_status["$current_file"]+="|$done_status"
+        else
+            todos["$current_file"]="$task"
+            todos_done_status["$current_file"]="$done_status"
+        fi
+    fi
+}
+
+getTodos() {
+    # Read input file
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        process_line "$line"
+    done < <(dynomark -q "TASK FROM \"$TODOS_DIR\" WHERE NOT CHECKED GROUP BY [file.path]")
+
+    # Output JSON
+    echo -n '['
+    first=true
+    for file in "${!todos[@]}"; do
+        if [ "$first" = false ]; then
+            echo -n ','
+        fi
+        first=false
+        IFS='|' read -ra tasks <<< "${todos[$file]}"
+        IFS='|' read -ra statuses <<< "${todos_done_status[$file]}"
+        basename=$(basename "$file")
+        echo -n '{"title":"'"$basename"'","path":"'"$file".md'","todos":['
+        first_task=true
+        for i in "${!tasks[@]}"; do
+            if [ "$first_task" = false ]; then
+                echo -n ','
+            fi
+            first_task=false
+            task="${tasks[$i]}"
+            status="${statuses[$i]}"
+            echo -n "{\"name\":\"$task\",\"done\":$status}"
+        done
+        echo -n ']}'
+    done
+    echo ']'
+}
+
+# deprecate?
+toggle() {
+    local todo="$1"
+
+    # Find the file that contains the specified todo
+    local file
+    file=$(grep -rl "$todo" $TODOS_DIR)
+
+    if [ -z "$file" ]; then
+        echo "Todo item not found in any file."
+        return 1
+    fi
+
+    # Create a temporary file for the updated content
+    local temp_file=$(mktemp)
+    echo $temp_file
+
+    # Use `sed` to toggle the status and write to the temporary file
+    sed -e "/$todo/ s/\[ \]/\[x\]/; /$todo/ s/\[x\]/\[ \]/" "$file" > "$temp_file"
+
+    # Replace the original file with the updated content
+    mv "$temp_file" "$file"
+    echo "Todo item toggled in file: $file"
+}
+
+process_file() {
+    local todo="$1"
+    local sed_cmd="$2"
+
+    # Find the files that contain the specified todo
+    local file
+    file=$(grep -rl "$todo" $TODOS_DIR)
+
+    file=$(echo "$file" | head -n 1)
+
+    echo "Processing file: $file"
+
+    # Check if the file exists and is readable
+    if [ ! -f "$file" ]; then
+        echo "File does not exist: $file"
+        return 1
+    fi
+
+    # Create a temporary file for the updated content
+    local temp_file=$(mktemp)
+
+    # Use `sed` to process the todo item and write to the temporary file
+    sed -e "$sed_cmd" "$file" > "$temp_file"
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to process file with sed"
+        return 1
+    fi
+
+    mv "$temp_file" "$file"
+    echo "Todo item updated in file: $file"
+}
+
+escape_string() {
+    local str="$1"
+    echo "$str" | sed -e 's/[\/&]/\\&/g'
+}
+
+mark_done() {
+    local todo="$1"
+    local escaped_todo=$(escape_string "$todo")
+    local sed_cmd="/$escaped_todo/ s/\[ \]/\[x\]/"
+    process_file "$escaped_todo" "$sed_cmd"
+}
+
+mark_undone() {
+    local todo="$1"
+    local escaped_todo=$(escape_string "$todo")
+    local sed_cmd="/$escaped_todo/ s/\[x\]/\[ \]/"
+    process_file "$escaped_todo" "$sed_cmd"
+}
+
+count() {
+    dynomark -q "TASK FROM \"$TODOS_DIR\" WHERE NOT CHECKED" | wc -l
+}
+
+case $1 in
+    done)
+        mark_done "$2"
+        ;;
+    undone)
+        mark_undone "$2"
+        ;;
+    count)
+        count
+        ;;
+    status)
+        getTodos
+        ;;
+    *)
+        echo '{ "todos": '$(getTodos)', "count": '$(count)'}' | jq '.todos |= sort_by(.title) | .todos |= reverse'
+    ;;
+esac

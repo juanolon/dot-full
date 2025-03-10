@@ -1,0 +1,35 @@
+.battery {
+  @include widget;
+  background: $battery;
+  padding: 0 6px;
+  border-radius: 3px;
+
+  // &.bat0 {
+  //   border-radius: 15px 3px 3px 15px;
+  // }
+  //
+  &.bat1 {
+    margin-left: 3px;
+    //   border-radius: 3px 15px 15px 3px;
+  }
+
+  &.plugged {
+    background-color: $overlay;
+    color: $battery-plugged;
+  }
+
+  &.charging {
+    background-color: $overlay;
+    color: $battery-charging;
+  }
+
+  &.critical {
+    background-color: $battery-critical;
+    color: $overlay;
+  }
+
+  &.warning {
+    background-color: $battery-warning;
+    color: $overlay;
+  }
+}

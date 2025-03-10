@@ -1,0 +1,62 @@
+#!/bin/bash
+
+getId() {
+    # $1: SINK or SOURCE
+    dev=$(echo $1 |  tr '[:upper:]' '[:lower:]' )
+    default_dev=$(pactl get-default-$dev)
+    sink_id=$(pactl list "$dev"s short | grep "$default_dev" | awk '{print $1}')
+    echo $sink_id
+}
+
+getVol() {
+    # $1: SINK or SOURCE
+    raw=$(wpctl get-volume @DEFAULT_AUDIO_$1@ | cut -d ' ' -f2)
+    echo $(echo "$raw * 100" | bc)
+}
+
+setVol() {
+    # $1: SINK or SOURCE
+    # $2: volume between 1-100
+    vol=$(echo "scale=2; $2 / 100" | bc)
+    wpctl set-volume @DEFAULT_AUDIO_$1@ $vol
+}
+
+isMuted() {
+    # $1: SINK or SOURCE
+    if wpctl get-volume @DEFAULT_AUDIO_$1@ 2>/dev/null | grep -q -e "MUTED"; then
+        echo "true"
+    else
+        echo "false"
+    fi
+}
+
+toggleMute() {
+    # $1: SINK or SOURCE
+    wpctl set-mute @DEFAULT_AUDIO_$1@ toggle
+}
+
+icons=("󰕿" "󰖀" "󰕾")
+
+case $1 in
+    mute)
+        toggleMute $2
+        ;;
+    set)
+        setVol $2 $3
+        ;;
+    *)
+        # event loop
+        id=$(getId "SOURCE")
+        pactl subscribe | rg --line-buffered "change" | rg --line-buffered "#$id" | while read -r _; do
+            lvl=$(awk -v n="$(getVol "SINK")" 'BEGIN{print int(n/34)}')
+            ismuted=$(isMuted "SINK")
+
+            if [ "$ismuted" = "false" ]; then
+                icon="${icons[$lvl]}"
+            else
+                icon="󰖁"
+            fi
+            echo '{ "icon": "'"$icon"'", "percent": '$(getVol "SINK")', "microphone": '$(getVol "SOURCE")', "ismute":"'$ismuted'" }'
+        done
+    ;;
+esac

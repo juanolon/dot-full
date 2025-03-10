@@ -1,0 +1,6 @@
+map <Up> navigate previous
+map <Down> navigate next
+
+set synctex true
+# set synctex-editor-command "nvr --remote +'%line' '%file'" --remote-send '<esc>zz'
+set synctex-editor-command "texlab inverse-search -i %{input} -l %{line}"

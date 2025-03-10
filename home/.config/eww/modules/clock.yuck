@@ -1,0 +1,7 @@
+; eu tz: Europe/Vienna
+(defwidget clock []
+  (label :class "clock"
+    ; 3t parameter: "America/Lima"
+    :text {formattime(EWW_TIME, "%a %d/%m - %H:%M")}
+    )
+  )

@@ -1,0 +1,9 @@
+.open-dock {
+  @include widget;
+
+  font-size: 18px;
+
+  &.open {
+    background: red;
+  }
+}

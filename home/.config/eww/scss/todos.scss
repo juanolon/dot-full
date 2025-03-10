@@ -1,0 +1,37 @@
+.todos-bar {
+  @include widget;
+}
+
+.todos-list {
+  label {
+    color: $text;
+    padding: 3px;
+  }
+
+  .list {
+    min-height: 200px;
+
+    .todos {
+      padding: 5px;
+
+      label {
+        padding: 2px;
+        margin-bottom: 5px;
+      }
+
+      .todo {
+        padding: 5px;
+        margin: 3px;
+        background: $base;
+        border-radius: 5px;
+
+        check {
+          padding: 2px;
+          border: 1px solid $text;
+          margin-right: 10px;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+}

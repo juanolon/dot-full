@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+is-open() {
+if eww active-windows | grep -e "dock" > /dev/null; then
+    return 0
+else
+    return 1
+fi
+}
+
+case $1 in
+    status)
+        is-open
+        ;;
+    toggle)
+        if is-open; then
+            eww close dock
+            swaymsg mode "default"
+        else
+            eww open dock
+            swaymsg mode "dock"
+        fi
+        ;;
+esac

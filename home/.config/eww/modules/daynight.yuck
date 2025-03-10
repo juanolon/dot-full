@@ -1,0 +1,7 @@
+(defwidget daynight []
+  (button
+    :onclick "day-night toggle"
+    :tooltip {daynight.tooltip}
+    (label :class "daynight ${daynight.class}" :text {daynight.text})
+    )
+  )

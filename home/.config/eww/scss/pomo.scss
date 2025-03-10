@@ -1,0 +1,36 @@
+.pomo {
+  margin-right: 5px;
+
+  .icon,
+  .info {
+    @include widget;
+
+    /* font-weight: bold; */
+    font-size: 18px;
+    padding: 1px 5px;
+  }
+
+  .paused label {
+    color: $pomo-pause;
+  }
+
+  .icon.running,
+  .icon.paused {
+    border-radius: 5px 0px 0px 5px;
+  }
+
+  .info.running,
+  .info.paused {
+    border-radius: 0px 5px 5px 0px;
+    margin-left: 0px;
+    font-size: 15px;
+  }
+
+  .running {
+    background: $pomo-running;
+
+    label {
+      color: $overlay;
+    }
+  }
+}

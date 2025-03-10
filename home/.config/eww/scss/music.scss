@@ -1,0 +1,41 @@
+.music {
+  margin-left: 10px;
+
+  .title {
+    margin-right: 10px;
+  }
+
+  label {
+    color: $spotify;
+  }
+
+  // .icon {
+  //   @include widget;
+  //   // margin-left: 7px;
+  //   border-radius: 15px 0px 0px 15px;
+  //   border-width: 1px 0 1px 1px;
+  //   padding: 0;
+  //   margin: 0 0 0 7px;
+  // }
+
+  // .prev label {
+  //   @include widget;
+  //   margin-left: 0px;
+  //   border-radius: 0px 0px 0px 0px;
+  //   border-width: 1px 0 1px 0;
+  // }
+  //
+  // .next label {
+  //   @include widget;
+  //   border-radius: 0px 15px 15px 0px;
+  //   margin-left: 0px;
+  //   border-width: 1px 1px 1px 0;
+  // }
+  //
+  // .play label {
+  //   @include widget;
+  //   margin-left: 0px;
+  //   border-radius: 0px 0px 0px 0px;
+  //   border-width: 1px 0 1px 0;
+  // }
+}

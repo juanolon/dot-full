@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Get the list of all devices managed by UDisks
+devices=$(udisksctl dump | grep -E 'DeviceFile|MountPaths' | sed 's/^[[:space:]]*//')
+
+# Initialize an empty JSON array
+json="["
+
+# Parse the devices and mount paths
+while IFS= read -r line; do
+    if [[ $line == DeviceFile* ]]; then
+        if [[ -n "$device" ]]; then
+            # Close the previous JSON object
+            json="${json%,}},"
+        fi
+        # Start a new JSON object for the device
+        device=$(echo "$line" | cut -d' ' -f2)
+        json="${json}{\"device\": \"$device\","
+    elif [[ $line == MountPaths* ]]; then
+        mounts=$(echo "$line" | cut -d' ' -f2- | tr -d '[]')
+        json="${json}\"mount_paths\": [$(echo "$mounts" | sed 's/ /", "/g;s/^/"/;s/$/"/')]}"
+
+        # If there are no mount paths, set it to an empty array
+        if [[ -z "$mounts" ]]; then
+            json="${json%,}]}"
+        fi
+    fi
+done <<< "$devices"
+
+# Close the last JSON object
+if [[ -n "$device" ]]; then
+    json="${json%,}}"
+fi
+
+# Close the JSON array
+json="${json}]"
+
+# Echo the JSON string
+echo "$json"

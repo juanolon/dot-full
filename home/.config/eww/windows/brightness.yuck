@@ -1,0 +1,12 @@
+(defwidget brightness [?iswindow]
+  (revealer
+    :transition "slideright"
+    :reveal {show_volume}
+    :duration ".2s"
+    (scaler :class "brightness${iswindow ? "-window" : ""}"
+            :value {brt.level}
+            :icon "${brt.icon}"
+            :change "scripts/brightness set {}"
+      )
+    )
+  )

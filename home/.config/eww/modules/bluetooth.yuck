@@ -1,0 +1,14 @@
+(defwidget bluetooth []
+  (button
+    :class "bluetooth"
+    :onclick "blueman-manager"
+    :onrightclick "scripts/bluetooth toggle"
+    :tooltip {bluetooth.text}
+    (label
+           :text {bluetooth.batt_icon != "" ?
+      "${bluetooth.text}  (${bluetooth.batt_icon})" :
+      "${bluetooth.text} ${bluetooth.icon}"
+      }
+      )
+    )
+  )

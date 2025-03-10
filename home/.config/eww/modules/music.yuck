@@ -1,0 +1,31 @@
+(defwidget music-module []
+  (box
+    :class "music"
+    :space-evenly false
+    :visible {music_on}
+      (btn
+        :class "title"
+        ; :onclick "${EWW_CMD} open --toggle music"
+        ; :onclick "sway [con_mark='music'] scratchpad show"
+        :onclick "swaymsg workspace "
+        :tooltip "${music.title} - ${music.album}"
+        :icon "  "
+        :text "${music.title} - ${music.album}"
+        )
+      (btn
+        :class "prev"
+        :onclick "scripts/music-controls prev"
+        :tooltip "Previous"
+        :icon "  ")
+      (btn
+        :class "play"
+        :onclick "scripts/music-controls toggle-play"
+        :tooltip "Play"
+        :icon " ${music.status} ")
+      (btn
+        :class "next"
+        :onclick "scripts/music-controls next"
+        :tooltip "Next"
+        :icon "  ")
+    )
+  )

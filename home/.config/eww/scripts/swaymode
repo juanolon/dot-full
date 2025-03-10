@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+case $1 in
+    close)
+        eww close swaymode
+    ;;
+    system)
+        mode='{"name": "System", "options": [{"name": "Lock", "key": "l", "icon": "󰌾"}, {"name": "Logout", "key": "l", "icon": "󰗽"}, {"name": "Suspend", "key": "l", "icon": "a"}, {"name": "Hibernate", "key": "h", "icon": "󰒲"}, {"name": "Reboot", "key": "r", "icon": ""}, {"name": "Shutdown", "key": "S", "icon": ""}]}'
+        eww update mode="$mode"
+        eww open swaymode
+        ;;
+    layout)
+        mode='{"name": "Layout", "options": [{"name": "Tall", "key": "t", "icon": ""}, {"name": "3 Columns", "key": "3", "icon": ""}, {"name": "None", "key": "n", "icon": ""}]}'
+        eww update mode="$mode"
+        eww open swaymode
+        ;;
+    screenshot)
+        mode='{"name": "Screenshot", "options": [{"name": "Screen", "key": "f", "icon": "󰹑"}, {"name": "Area", "key": "a", "icon": ""}, {"name": "Window", "key": "w", "icon": ""}]}'
+
+        eww update mode="$mode"
+        eww open swaymode
+        ;;
+esac

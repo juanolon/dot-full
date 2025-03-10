@@ -1,0 +1,50 @@
+#!/bin/bash
+
+start_time_file="/tmp/counter_start_time"
+interval=$2  # Interval in milliseconds
+
+start_counter() {
+    # Save the start time
+    date +%s%3N > "$start_time_file"
+    echo "Counter started."
+}
+
+stop_counter() {
+    if [ -f "$start_time_file" ]; then
+        rm -f "$start_time_file"
+        echo "Counter stopped."
+    else
+        echo "No counter running."
+    fi
+}
+
+get_counter() {
+    if [ ! -f "$start_time_file" ]; then
+        echo "Counter is not running. Starting counter..."
+        start_counter
+    fi
+    start_time=$(cat "$start_time_file")
+    current_time=$(date +%s%3N)
+    elapsed_time=$((current_time - start_time))
+    counter=$((elapsed_time / interval))
+    if [ "$counter" -gt 100 ]; then
+        counter=$((counter % 101))
+    fi
+    echo "$counter"
+}
+
+# Handle command-line arguments
+case "$1" in
+    start)
+        start_counter
+        ;;
+    stop)
+        stop_counter
+        ;;
+    get)
+        get_counter
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|get}"
+        ;;
+esac

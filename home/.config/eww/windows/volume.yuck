@@ -1,0 +1,12 @@
+(defwidget volume [?iswindow]
+  (revealer
+    :transition "slideright"
+    :reveal {show_volume}
+    :duration ".2s"
+    (scaler :class "volume${iswindow ? "-window" : ""}"
+            :value {vol.percent}
+            :change "scripts/volume set SINK {}"
+            :icon {vol.icon}
+      )
+    )
+  )

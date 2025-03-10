@@ -1,0 +1,12 @@
+(deflisten SPACES :initial '{"active":0,"workspaces":[]}' "~/.config/eww/scripts/eww-ws")
+
+(defwidget workspaces []
+  (box :class "bar-block workspaces"
+    (for entry in "${SPACES.workspaces}"
+      (eventbox
+        :cursor "hand"
+        (button :class "${entry.is_active ? "focused" : entry.urgent ? "urgent" : "empty"}"
+                :onclick "swaymsg workspace ${entry.name}" "${entry.name}")
+        )
+      ))
+  )

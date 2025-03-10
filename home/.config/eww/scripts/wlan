@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+
+handle_error() {
+    local error_message="$1"
+    local ssid="$2"
+    # remove profile of unsuccessful connections
+    nmcli connection delete "$ssid"
+    echo "Error: $error_message"
+    exit 1
+}
+
+connect_to_wifi() {
+    local ssid="$1"
+
+    # Check if a known connection exists for the SSID
+    connection_name=$(nmcli -t -f NAME,UUID connection show --active | grep ":$ssid$" | cut -d: -f1)
+
+    if [ -n "$connection_name" ]; then
+        # If the connection is already active, just reconnect
+        nmcli connection up "$connection_name" || handle_error "Failed to reconnect to $ssid." $ssid
+    else
+        # Check if the network requires a password
+        security_type=$(nmcli -t -f SSID,SECURITY dev wifi | grep -wF "$ssid" | awk -F':' '{print $2}')
+
+        if [[ "$security_type" == "WPA"* || "$security_type" == "WEP" ]]; then
+            # Check if a saved connection profile exists for the SSID
+            saved_connection=$(nmcli -t -f NAME connection show | grep "^$ssid$")
+
+            if [ -n "$saved_connection" ]; then
+                # Connect using the saved profile
+                nmcli connection up "$saved_connection" || handle_error "Failed to connect to $ssid using the saved profile." $ssid
+            else
+                # Use pinentry-qt to securely get the password
+                echo "asking for pass"
+                password=$(echo "GETPIN" | pinentry-qt | grep '^D ' | cut -d ' ' -f 2)
+
+                if [ -n "$password" ]; then
+                    nmcli device wifi connect "$ssid" password "$password" || handle_error "Failed to connect to $ssid with the provided password. Check the password and try again." $ssid
+                else
+                    echo "No password entered. Connection aborted."
+                fi
+            fi
+        else
+            # No password required, attempt to connect
+            nmcli device wifi connect "$ssid" || handle_error "Failed to connect to $ssid. Make sure the network is available." $ssid
+        fi
+    fi
+}
+
+icons=("󰤟" "󰤢" "󰤥" "󰤨")
+geticon() {
+    perc=$1
+    level=$(awk -v n="$PERC" 'BEGIN{print int((n-1)/25)}')
+    echo "${icons[$level]}"
+}
+
+# Function to get status and list available networks
+get_wlans() {
+    eww update run_counter=true
+    nmcli device wifi rescan
+
+    nmcli -t -f SSID,SIGNAL,SECURITY,ACTIVE dev wifi list | while IFS=: read -r ssid signal security active; do
+        # Determine if password is required (basic heuristic)
+        local password_required=false
+        if [[ "$security" =~ "WPA" || "$security" =~ "WEP" ]]; then
+            password_required=true
+        fi
+
+        signal=$(printf "%d" "${signal:-0}" 2>/dev/null || echo 0)
+
+        # Determine icon based on signal strength
+        local icon=$(geticon $signal)
+
+        local active_status=false
+        if [ "$active" == "yes" ]; then
+            active_status=true
+        fi
+
+        # Output JSON entry
+        jq -n --arg ssid "$ssid" --arg signal "$signal" --arg icon "$icon" --arg security "$security" --argjson password "$password_required" --argjson active "$active_status" \
+        '{ssid: $ssid, signal: $signal, icon: $icon, security: $security, password: $password, active: $active}'
+    done | jq -s 'sort_by(.signal | tonumber) | reverse'
+
+    eww update run_counter=false
+}
+
+toggle_wifi() {
+    wifi_status=$(nmcli radio wifi)
+
+    if [ "$wifi_status" = "enabled" ]; then
+        nmcli radio wifi off
+        echo "Wi-Fi turned off."
+    else
+        nmcli radio wifi on
+        echo "Wi-Fi turned on."
+    fi
+}
+
+status() {
+    status=$(nmcli g | tail -n 1 | awk '{print $1}')
+    signal=$(nmcli -f in-use,signal dev wifi | rg "\*" | awk '{ print $2 }')
+    essid=$(nmcli -t -f NAME connection show --active | head -n1 | sed 's/\"/\\"/g')
+
+    echo '{"essid": "'"$essid"'", "signal": "'"$signal"'", "icon": "'"$(geticon)"'"}'
+}
+
+case $1 in
+    connect)
+        if [ -z "$2" ]; then
+            echo "Usage: $0 connect SSID"
+            exit 1
+        fi
+        connect_to_wifi "$2"
+        ;;
+    disconnect)
+        nmcli connection down id "$2"
+        ;;
+    toggle)
+        toggle_wifi
+        ;;
+    refresh)
+        list=$(get_wlans)
+
+        eww update wifis="$list"
+        echo $list
+        ;;
+    wifi-status)
+        wifi_status=$(nmcli radio wifi)
+        wifistatus=false
+        if [ "$wifi_status" == "enabled" ]; then
+            wifistatus=true
+        fi
+        echo $wifistatus
+    ;;
+    *)
+        status
+        ip monitor link | while read -r line; do
+            status
+        done
+    ;;
+esac

@@ -1,0 +1,10 @@
+.gpu {
+  @include widget;
+  font-size: 22px;
+
+  &.running {
+    background: $gpu-running;
+    color: $gpu-running-txt;
+    font-size: 15px;
+  }
+}

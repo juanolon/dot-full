@@ -1,0 +1,8 @@
+(defwidget gpu []
+  (button
+    :onclick "firefox https://console.genesiscloud.com/dashboard/instances"
+    :tooltip {gpu.tooltip}
+    :visible {gpu.class == "running" ? "true" : "false"}
+    (label :class "gpu ${gpu.class}" :text {gpu.icon})
+    )
+  )

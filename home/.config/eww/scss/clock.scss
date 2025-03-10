@@ -1,0 +1,5 @@
+.clock {
+  @include widget;
+  background: $clock;
+  margin-right: 7px;
+}

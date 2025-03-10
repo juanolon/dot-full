@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+icons=("" "" "" "" "" "" "" "" "" "" "" "" "" "")
+
+MAX_GAMMA=
+
+clamp() {
+    local value=$1
+    local min=$2
+    local max=$3
+    if (( $(echo "$value < $min" | bc -l) )); then
+        value=$min
+    elif (( $(echo "$value > $max" | bc -l) )); then
+        value=$max
+    fi
+    echo "$value"
+}
+
+get_percent() {
+    local value=$(clamp $1 $2 $3)
+    local min=$2
+    local max=$3
+    echo "scale=0; ($value - $min) * 100 / ($max - $min) + 0.5 / 1" | bc
+}
+# get_percent_float() {
+#     local value=$(clamp $1 $2 $3)
+#     local min=$2
+#     local max=$3
+#     echo "scale=2; 100 * ($value - $min) / ($max - $min)" | bc
+# }
+
+get_value() {
+    local percent=$(clamp $1 1 100)
+    local min=$2
+    local max=$3
+    # echo "($percent / 100) * ($max - $min) + $min" | bc
+    echo "scale=0; ($percent * ($max - $min) / 100) + $min + 0.5 / 1" | bc
+}
+
+# without rounding
+get_value_gamma() {
+    local percent=$1
+    local min=$2
+    local max=$3
+    echo "scale=2; ($percent * ($max - $min) / 100 + $min)" | bc
+}
+
+status() {
+    lvl=$(backlight get)
+    icon=${icons[$(awk -v n="$lvl" 'BEGIN{print int(n/8)}')]}
+
+    echo '{ "level": '"$lvl"', "icon": "'"$icon"'" }'
+}
+
+case $1 in
+    reset)
+        busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Gamma d 1
+        busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 10000
+        if [[ $(scripts/dawn-temperature status) -eq "running" ]]; then
+            scripts/dawn-temperature stop
+        fi
+        ;;
+    gamma-set)
+        # val=$($2*100)
+        gamma=$(get_value_gamma "$2" 0.1 3.0)
+        dunstify -r 1231232 -a "gamma" "Gamma $2 set to $gamma"
+        busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Gamma d $gamma
+        ;;
+    temp-set)
+        temp=$(get_value "$2" 1000 10000)
+        dunstify -r 1231233 -a "temp" "Temperature $2 set to $temp"
+        busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q $temp
+        ;;
+    gamma-temp-status)
+        wl-gammarelay-rs watch "{t}:{g}" | while IFS=":" read -r temperature gamma; do
+
+            temp_per=$(get_percent "$temperature" 1000 10000)
+            gamma_per=$(get_percent "$gamma" 0.1 2.0)
+
+            jq --null-input -c \
+                --arg temp "$temp_per" \
+                --arg gamma "$gamma_per" \
+                '{"temperature": $temp, "gamma": $gamma}'
+        done
+        ;;
+    set)
+        cat /proc/acpi/button/lid/LID/state | grep -e "open" >/dev/null
+        if [ $? -eq 0 ]; then
+            bright=$2
+            backlight set $2
+        else
+            bright=$(echo "scale=2; $2 / 100" | bc)
+            if (( $(echo "$bright < 0.30" | bc -l) )); then
+                bright=0.30
+            fi
+            busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Brightness d $bright
+        fi
+        dunstify -r 1231234 -a "Brightness" "Brightness set to $bright"
+        ;;
+    *)
+        status
+        udevadm monitor | rg --line-buffered "backlight" | rg --line-buffered "UDEV" | while read -r _; do
+        status
+        done
+    ;;
+esac

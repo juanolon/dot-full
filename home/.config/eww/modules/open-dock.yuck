@@ -1,0 +1,12 @@
+; TODO change btn color when open
+(defwidget open-dock []
+  (eventbox
+    :cursor "hand"
+    (button
+      :class {docked ? "open" : "closed"}
+      :onclick "scripts/dock toggle && ${EWW_CMD} update docked=$(scripts/dock status)"
+      (label :class "open-dock" :text "󰮭")
+      )
+    )
+  )
+
