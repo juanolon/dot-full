@@ -3,6 +3,7 @@ store_directory = "/usr/local/bin"
 [difftastic]
 [fd]
 
+# TODO ripgrep release name contains hash in the name (ripgre...gz.sha256). tool can't handle this
 [ripgrep]
     asset_name.linux = "14.1.1-x86_64-unknown-linux-musl"
 
@@ -14,14 +15,55 @@ store_directory = "/usr/local/bin"
     repo      = "yazi"
     exe_name  = "yazi"
 
-    tag       = "v25.3.2"
+    # tag       = "v25.3.2"
     asset_name.linux = "x86_64-unknown-linux-musl"
-
 
 [ya]
     owner     = "sxyazi"
     repo      = "yazi"
     exe_name  = "ya"
 
-    tag       = "v25.3.2"
+    # tag       = "v25.3.2"
     asset_name.linux = "x86_64-unknown-linux-musl"
+
+# TODO dynomark binary is not compressed. tool expect the tool to be compressed
+[dynomark]
+    owner     = "k-lar"
+    repo      = "dynomark"
+    exe_name  = "dynomark-linux"
+
+    # tag       = "0.2.0"
+    asset_name.linux = "linux"
+
+[klog]
+    owner     = "jotaen"
+    repo      = "klog"
+    exe_name  = "klog"
+
+    # tag       = "v6.5"
+    asset_name.linux = "linux"
+
+[zk]
+    owner     = "zk-org"
+    repo      = "zk"
+    exe_name  = "klog"
+
+    # tag = "v0.14.2"
+    asset_name.linux = "linux-amd64"
+
+[fzf]
+    owner     = "junegunn"
+    repo      = "fzf"
+    exe_name  = "fzf"
+
+    # tag = "v0.60.3"
+    asset_name.linux = "linux-amd64"
+
+# TODO bin not compressed
+[pomodoro-cli]
+    owner     = "jkallio"
+    repo      = "pomodoro-cli"
+    exe_name  = "pomodoro-cli"
+
+    # tag = "v.1.2.5"
+    asset_name.linux = "pomodoro-cli"
