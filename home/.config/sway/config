@@ -376,7 +376,7 @@ input type:touchpad {
 }
 
 set $wallpapers_path ~/Pictures/backgrounds
-output "*" bg `find $wallpapers_path -type f | shuf -n1` fill
+output "*" bg `/usr/bin/find $wallpapers_path -type f | shuf -n1` fill
 
 gaps outer -25
 gaps inner 10
