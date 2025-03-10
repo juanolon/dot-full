@@ -1,0 +1,92 @@
+#!/bin/sh
+
+# Enable to play sound
+PLAYSOUND=true
+
+# Sound to play
+SOUND=/usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+
+# At which level the volume is considered too high
+WARNINGLEVEL=60
+
+# For how much milliseconds the notification will stay visible
+TIMEOUT=1500
+
+# Unique dunst notification id
+ID=2593
+
+
+# refreshbar () {
+#   kill "$(pstree -lp | grep -- -statusbar.sh\([0-9] | sed "s/.*sleep(\([0-9]\+\)).*/\1/")"
+# }
+
+getVolume () {
+    amixer get Master | grep '%' | head -n 1 | cut -d '[' -f 2 | cut -d '%' -f 1
+}
+
+is_mute (){
+    amixer get Master | grep '%' | grep -oE '[^ ]+$' | grep off > /dev/null
+}
+
+is_micoff (){
+    amixer get Capture | grep '%' | grep -oE '[^ ]+$' | grep off > /dev/null
+}
+
+buildBar () {
+    $HOME/.bin/drawbar $1 $2 $3
+}
+
+sendNotification () {
+    VOLUME=`getVolume`
+    BODY="`buildBar 5 $VOLUME false` $VOLUME%"
+    URGENCY="normal"
+
+    if [ $VOLUME -ge $WARNINGLEVEL ]; then
+        URGENCY=critical
+    fi
+
+    if [ $PLAYSOUND = true ]; then
+        paplay $SOUND &
+    fi
+
+    dunstify -t "$TIMEOUT" -r "$ID" -u "$URGENCY" "$BODY"
+}
+
+case $1 in
+    up)
+        amixer -D pulse set Master on > /dev/null
+        amixer -D pulse sset Master 5%+ > /dev/null
+        # refreshbar
+        sendNotification
+        ;;
+    down)
+        amixer -D pulse set Master on > /dev/null
+        amixer -D pulse sset Master 5%- > /dev/null
+        # refreshbar
+        sendNotification
+        ;;
+    nomic)
+        amixer -D pulse set Capture toggle
+        # refreshbar
+
+        if is_micoff ; then
+            BODY="`buildBar 5 100 true` No Mic"
+            dunstify -t "$TIMEOUT" -r "$ID" -u "$URGENCY" "$BODY"
+        else
+            sendNotification
+        fi
+        ;;
+    status)
+        getVolume
+        ;;
+    mute)
+        amixer -D pulse set Master 1+ toggle > /dev/null
+        # refreshbar
+        if is_mute ; then
+            BODY="`buildBar 5 100 true` Muted"
+            dunstify -t "$TIMEOUT" -r "$ID" -u "$URGENCY" "$BODY"
+        else
+            sendNotification
+        fi
+        ;;
+esac
