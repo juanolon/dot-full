@@ -1,0 +1,27 @@
+store_directory = "/usr/local/bin"
+
+[difftastic]
+[fd]
+
+[ripgrep]
+    asset_name.linux = "14.1.1-x86_64-unknown-linux-musl"
+
+[tool-sync]
+    exe_name  = "tool"
+
+[yazi]
+    owner     = "sxyazi"
+    repo      = "yazi"
+    exe_name  = "yazi"
+
+    tag       = "v25.3.2"
+    asset_name.linux = "x86_64-unknown-linux-musl"
+
+
+[ya]
+    owner     = "sxyazi"
+    repo      = "yazi"
+    exe_name  = "ya"
+
+    tag       = "v25.3.2"
+    asset_name.linux = "x86_64-unknown-linux-musl"
