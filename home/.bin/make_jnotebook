@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jupytext --to py:percent $1

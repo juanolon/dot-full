@@ -1,0 +1,26 @@
+#!/bin/bash
+
+is_error() {
+    local response="$1"
+    echo "$response" | jq -e 'has("code") and has("message")' > /dev/null
+}
+
+TOKEN=$(grep "^GEN_TOKEN=" ~/.env | cut -d '=' -f2)
+
+get_instances=''
+
+response=$(curl -s -H "Authorization: Bearer $TOKEN" https://api.genesiscloud.com/compute/v1/instances)
+# echo $response
+
+if is_error "$response"; then
+    echo "$response" | jq -r '.message'
+    exit 1
+else
+    running_gpu=$(echo "$response" | jq -r '.instances[] | select(.status == "active") | .name')
+
+    if [ -n "$running_gpu" ]; then
+        echo "{\"alt\": \"running\", \"class\": \"running\", \"text\": \"$running_gpu\", \"tooltip\": \"GPU is running\", \"icon\": \"\"}"
+    else
+        echo "{\"alt\": \"stopped\",\"class\": \"stopped\", \"text\": \"\", \"tooltip\": \"No GPU running\", \"icon\": \"\"}"
+    fi
+fi

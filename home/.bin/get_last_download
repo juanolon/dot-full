@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+DOWNLOADDIR=~/Downloads/
+
+LAST=$(ls -t $DOWNLOADDIR | head -n1)
+
+BASEDIR=$(dirname $0)
+echo "Found $DOWNLOADDIR$LAST"
+
+mv $DOWNLOADDIR$LAST $PWD
