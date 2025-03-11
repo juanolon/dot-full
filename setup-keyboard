@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 sudo add-apt-repository -n ppa:deafmute/interception
 sudo sed -i 's/bookworm/bionic/g' /etc/apt/sources.list.d/deafmute-ubuntu-interception-bookworm.list
 sudo apt update && install interception-tools libevdev-dev libyaml-cpp-dev

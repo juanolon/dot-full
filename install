@@ -10,7 +10,8 @@ sudo apt install \
     software-properties-common python3-launchpadlib \
     brightnessctl \
     default-jdk \
-    udiskie dosfstools mtools
+    udiskie dosfstools mtools \
+    python3-i3ipc
 
 # update fonts
 fc-cache
@@ -31,6 +32,7 @@ if confirm "Do you want to install Kitty?"; then
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
     ln -s /home/juanolon/.local/kitty.app/bin/kitty ~/.bin/kitty
     ln -s /home/juanolon/.local/kitty.app/bin/kitten ~/.bin/kitten
+    sudo apt remove kitty
     cd -
 fi
 
@@ -73,7 +75,7 @@ if confirm "Do you want to setup eww?"; then
     cd /tmp
     git clone --depth 1 https://github.com/elkowar/eww.git && cd eww
     cargo build --release --no-default-features --features=wayland
-    sudo mv /home/juanolon/.cargo/bin/eww /usr/local/bin
+    sudo mv target/release/eww /usr/local/bin
     cd -
 fi
 
