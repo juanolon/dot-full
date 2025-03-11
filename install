@@ -29,9 +29,8 @@ confirm() {
 # setup kitty
 if confirm "Do you want to install Kitty?"; then
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    cd ~/.bin
-    ln -s /home/juanolon/.local/kitty.app/bin/kitty kitty
-    ln -s /home/juanolon/.local/kitty.app/bin/kitten kitten
+    ln -s /home/juanolon/.local/kitty.app/bin/kitty ~/.bin/kitty
+    ln -s /home/juanolon/.local/kitty.app/bin/kitten ~/.bin/kitten
     cd -
 fi
 
@@ -83,7 +82,7 @@ if confirm "Do you want to setup keyboard?"; then
 fi
 
 if confirm "Do you want to setup bluetooth?"; then
-    echo "TODO"
+    sudo apt install blueman
 fi
 
 if confirm "Do you want to setup latex?"; then
