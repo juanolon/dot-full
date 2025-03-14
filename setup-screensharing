@@ -1,0 +1,4 @@
+
+sudo apt install xdg-desktop-portal-wlr pipewire pipewire-media-session-pulseaudio pipewire-pulse libspa-0.2-bluetooth wireplumber
+
+systemctl --user restart pipewire wireplumber xdg-desktop-portal xdg-desktop-portal-wlr

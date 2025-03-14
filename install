@@ -73,6 +73,7 @@ fi
 if confirm "Do you want to setup eww?"; then
     sudo apt install libgtk-3-dev libgio2.0-cil-dev libdbusmenu-gtk3-dev libgtk-layer-shell-dev
     cd /tmp
+    # be carefull of bug: https://github.com/elkowar/eww/issues/1283 not reloading the bar
     git clone --depth 1 https://github.com/elkowar/eww.git && cd eww
     cargo build --release --no-default-features --features=wayland
     sudo mv target/release/eww /usr/local/bin
@@ -93,6 +94,15 @@ fi
 
 if confirm "Do you want to install other?"; then
     sudo tool-sync --config /home/juanolon/.config/tool-sync/config.toml sync
+fi
+
+if confirm "Do you want to install theme?"; then
+    cd /tmp
+    wget https://github.com/rose-pine/gtk/releases/download/v2.2.0/gtk3.tar.gz
+    tar -xf gtk3.tar.gz
+    mkdir ~/.themes
+    mv gtk3/* ~/.themes
+    cd -
 fi
 
 if confirm "Do you want to install gamma/temperature?"; then
