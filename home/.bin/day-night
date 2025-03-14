@@ -78,7 +78,7 @@ case $1 in
 
         sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/zsh/current-lscolor.zsh
 
-        sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/waybar/colors-rose-pine.css
+        # sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/waybar/colors-rose-pine.css
 
         sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/eww/colors-rose-pine.scss
 

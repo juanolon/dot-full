@@ -46,7 +46,7 @@ store_directory = "/usr/local/bin"
 [zk]
     owner     = "zk-org"
     repo      = "zk"
-    exe_name  = "klog"
+    exe_name  = "zk"
 
     # tag = "v0.14.2"
     asset_name.linux = "linux-amd64"
