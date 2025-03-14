@@ -1,8 +1,11 @@
 (defwidget batteries []
   (box :space-evenly false
   (battery :bat bat0)
-  (label :text "|")
-  (battery :bat bat1)
+  (box
+    :visible show-bat1
+    (label :text "|")
+    (battery :bat bat1)
+    )
     )
   )
 

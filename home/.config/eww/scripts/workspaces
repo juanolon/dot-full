@@ -22,7 +22,7 @@ print_workspaces() {
         elif contains "$urgent" "$d" && [ -n "$str" ] ; then
             class="urgent"
             label=" $d"
-        else 
+        else
             class="empty"
             label=" $d"
         fi

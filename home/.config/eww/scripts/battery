@@ -3,11 +3,11 @@
 # $1 BAT0/BAT1..
 # $2 critical level
 
-ID=$1
-BAT=/sys/class/power_supply/$1
-WARN=${2:-20}
-CRIT=${3:-10}
-UPDATE=3
+ID=$2
+BAT=/sys/class/power_supply/$2
+WARN=${3:-20}
+CRIT=${4:-10}
+UPDATE=5
 
 FILE=/tmp/battery_notified
 
@@ -103,10 +103,28 @@ status() {
     echo '{ "icon": "'"$icon"'", "percentage": '"$PERC"', "status": "'"$status"'", "time": "'"$(gettime)"'", "id": "'"$(echo $ID |  tr '[:upper:]' '[:lower:]' )"'"}'
 }
 
-status
+has() {
+    [[ -d "$BAT" ]]
+}
 
-while true; do
-    status
-    notify
-    sleep $UPDATE
-done
+
+# battery has BAT0
+# battery status
+case $1 in
+    has)
+        has $2
+        ;;
+    status)
+        if has $2; then
+            status
+            while true; do
+                status
+                if [[ "$2" == "BAT1" ]]; then
+                    eww update show-bat1="true"
+                fi
+                notify
+                sleep $UPDATE
+            done
+        fi
+        ;;
+esac

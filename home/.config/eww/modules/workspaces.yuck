@@ -5,7 +5,7 @@
     (for entry in "${SPACES.workspaces}"
       (eventbox
         :cursor "hand"
-        (button :class "${entry.is_active ? "focused" : entry.urgent ? "urgent" : "empty"}"
+        (button :class "${entry.is_active ? "focused" : entry.is_urgent ? "urgent" : "empty"}"
                 :onclick "swaymsg workspace ${entry.name}" "${entry.name}")
         )
       ))
