@@ -1,0 +1,15 @@
+[Unit]
+Description=Eww Widgets
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/local/bin/eww daemon
+ExecStop=/usr/local/bin/eww kill
+; ExecStartPost=/usr/local/bin/eww open bar
+WorkingDirectory=%h
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

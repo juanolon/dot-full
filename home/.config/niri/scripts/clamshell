@@ -1,0 +1,21 @@
+#!/bin/bash
+
+LAPTOP_OUTPUT=eDP-1
+MONITOR_OUTPUT=DP-4
+LID_STATE_FILE="/proc/acpi/button/lid/LID/state"
+
+
+if rg -Pi "open" $LID_STATE_FILE >/dev/null 2>&1; then
+    niri msg output "$LAPTOP_OUTPUT" on
+elif rg -Pi "closed" $LID_STATE_FILE >/dev/null 2>&1; then
+    niri msg output "$LAPTOP_OUTPUT" off
+else
+    echo "No LID status found"
+    exit 1
+fi
+
+if niri msg outputs | rg -Pi $MONITOR_OUTPUT >/dev/null 2>&1; then
+    niri msg output "$MONITOR_OUTPUT" on
+fi
+
+eww close-all && eww open bar
