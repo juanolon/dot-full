@@ -1,4 +1,5 @@
-(deflisten SPACES :initial '{"active":0,"workspaces":[]}' "~/.config/eww/scripts/eww-ws")
+; (deflisten SPACES :initial '{"active":0,"workspaces":[]}' "~/.config/eww/scripts/eww-ws")
+(deflisten SPACES :initial '{"active":0,"workspaces":[]}' "scripts/workspaces")
 
 (defwidget workspaces []
   (box :class "bar-block workspaces"
