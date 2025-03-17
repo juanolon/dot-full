@@ -6,8 +6,8 @@
     (for entry in "${SPACES.workspaces}"
       (eventbox
         :cursor "hand"
-        (button :class "${entry.is_active ? "focused" : entry.urgent ? "urgent" : "empty"}"
-                :onclick "swaymsg workspace ${entry.name}" "${entry.name}")
+        (button :class "${entry.is_active ? "focused" : "empty"}"
+                :onclick "niri msg action focus-workspace ${entry.name}" "${entry.name}")
         )
       ))
   )
