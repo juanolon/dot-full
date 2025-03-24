@@ -115,5 +115,3 @@ fi
 
 echo "TODO: setup theme"
 echo "TODO: install tpl"
-# https://github.com/rose-pine/gtk?tab=readme-ov-file
-echo "TODO: setup gtk theme"
