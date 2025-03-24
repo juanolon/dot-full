@@ -5,6 +5,69 @@ MODE_FILE=$HOME/.background-mode
 touch $MODE_FILE
 DUNSTRC=$HOME/.config/dunst/dunstrc.d/
 
+
+load_theme() {
+    local theme_file="$1"
+    declare -gA colors  # Declare as a global associative array
+
+    echo "Loading theme from: $theme_file"
+
+    while IFS=" " read -r color_name color_value; do
+        # Skip comments and empty lines
+        if [[ "$color_name" =~ ^#.* ]] || [[ -z "$color_name" ]]; then
+            continue
+        fi
+        colors["$color_name"]="$color_value"
+    done < "$theme_file"
+
+    # Debug: Print loaded variables
+    echo "Loaded colors:"
+    for key in "${!colors[@]}"; do
+        echo "  $key = ${colors[$key]}"
+    done
+}
+
+generate_config() {
+    local theme="$1"
+    local template_file="$2"
+    local output_file="$3"
+    
+    # Determine theme file path
+    if [[ "$theme" == "light" ]]; then
+        theme_file="$HOME/.config/niri/light.theme"
+    elif [[ "$theme" == "dark" ]]; then
+        theme_file="$HOME/.config/niri/dark.theme"
+    else
+        echo "Invalid theme. Please use 'light' or 'dark'."
+        exit 1
+    fi
+
+    # Load theme colors into an associative array
+    load_theme "$theme_file"
+
+    # Copy the template file to the output file
+    cp "$template_file" "$output_file"
+
+    # Debug: Show the initial content of the file
+    echo "Initial template content:"
+    cat "$output_file"
+    echo ""
+
+    # Replace placeholders dynamically
+    for color_name in "${!colors[@]}"; do
+        # Escape variable name for sed (handles "$base$" properly)
+        placeholder="\$$color_name\$"
+        value="${colors[$color_name]}"
+
+        echo "Replacing '$placeholder' with '$value'"
+        
+        # Use printf to avoid issues with special characters in sed
+        sed -i "s|\"\?$placeholder\"\?|\"$value\"|g" "$output_file"
+    done
+
+    # cat "$output_file"
+}
+
 # # 
 STATUS=""
 ICON=""
@@ -83,6 +146,7 @@ case $1 in
         sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/eww/colors-rose-pine.scss
 
         # sed -i "s/$STARSHIP_THEME_OLD/$STARSHIP_THEME/" ~/.config/bat/config
+        generate_config "$MODE" "$HOME/.config/niri/config.kdl.tpl" "$HOME/.config/niri/config.kdl"
 
 
         # dunst

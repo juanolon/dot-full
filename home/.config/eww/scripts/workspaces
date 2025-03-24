@@ -9,31 +9,38 @@ contains() {
 }
 
 print_workspaces() {
-    buf=""
-    output=$(swaymsg -rt get_workspaces)
-    desktops=$(echo "$output" | jq ".[] | .name | tonumber")
-    focused=$(echo "$output" | jq ".[] | select(.focused==true) | .name | tonumber")
-    urgent=$(echo "$output" | jq ".[] | select(.urgent==true) | .name | tonumber")
+    output=$(niri msg -j workspaces)
+    desktops=$(echo "$output" | jq "sort_by(.idx) | .[] | .idx | tonumber")
+    focused=$(echo "$output" | jq "sort_by(.idx) | .[] | select(.is_focused==true) | .idx | tonumber")
 
+    workspace_list=()
     for d in $desktops; do
         if contains "$focused" "$d" ; then
-            class="focused"
-            label=" $d"
-        elif contains "$urgent" "$d" && [ -n "$str" ] ; then
-            class="urgent"
-            label=" $d"
-        else
-            class="empty"
-            label=" $d"
+        #     class="focused"
+        #     label=" $d"
+        # elif contains "$urgent" "$d" && [ -n "$str" ] ; then
+        #     class="urgent"
+        #     label=" $d"
+        # else 
+        #     class="empty"
+        #     label=" $d"
+            is_active=true
+        else 
+            is_active=false
         fi
-        buf="$buf (eventbox :cursor \"hand\" (button :class \"$class\" :onclick \"swaymsg workspace $d\" \"$label\"))"
+        workspace_list+=("{\"name\": \"$d\", \"is_active\": $is_active}")
     done
 
-    echo "(box :orientation \"h\" :valign \"start\" $buf)"
+    # Join array elements with commas
+    workspace_json=$(IFS=,; echo "${workspace_list[*]}")
+
+    echo "{\"active\": $focused, \"workspaces\": [$workspace_json]}"
 }
 
 print_workspaces
 
-swaymsg -t subscribe -m "['workspace']" | while read -r _ ; do
-    print_workspaces
-done 
+niri msg --json event-stream | while read -r line; do
+    if echo "$line" | jq -e 'has("WorkspaceActivated")' > /dev/null; then
+        print_workspaces
+    fi
+done
