@@ -4,12 +4,15 @@ PartOf=graphical-session.target
 After=graphical-session.target
 
 [Service]
-ExecStart=/usr/local/bin/eww daemon
+Type=simple
+ExecStart=/usr/local/bin/eww daemon --no-daemonize
 ExecStop=/usr/local/bin/eww kill
 ; ExecStartPost=/usr/local/bin/eww open bar
 WorkingDirectory=%h
-Restart=on-failure
+Restart=always
 RestartSec=3
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=graphical-session.target

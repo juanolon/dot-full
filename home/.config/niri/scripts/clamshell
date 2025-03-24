@@ -6,8 +6,10 @@ LID_STATE_FILE="/proc/acpi/button/lid/LID/state"
 
 
 if rg -Pi "open" $LID_STATE_FILE >/dev/null 2>&1; then
+    notify-send "Laptop lid open"
     niri msg output "$LAPTOP_OUTPUT" on
 elif rg -Pi "closed" $LID_STATE_FILE >/dev/null 2>&1; then
+    notify-send "Laptop lid closed"
     niri msg output "$LAPTOP_OUTPUT" off
 else
     echo "No LID status found"
@@ -15,7 +17,9 @@ else
 fi
 
 if niri msg outputs | rg -Pi $MONITOR_OUTPUT >/dev/null 2>&1; then
+    notify-send "Monitor connected"
     niri msg output "$MONITOR_OUTPUT" on
 fi
 
+notify-send "Opnening bar"
 eww close-all && eww open bar

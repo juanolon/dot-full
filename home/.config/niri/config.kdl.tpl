@@ -187,6 +187,8 @@ binds {
     Super+Alt+L { spawn "swaylock"; }
 
     Super+Escape { spawn "wlr-which-key" "/home/juanolon/.config/wlr-which-key/system.yaml"; }
+    Super+S { spawn "wlr-which-key" "/home/juanolon/.config/wlr-which-key/screenshot.yaml"; }
+    Super+E { spawn "wlr-which-key" "/home/juanolon/.config/wlr-which-key/toggles.yaml"; }
 
 
     Mod+C { center-column; }
