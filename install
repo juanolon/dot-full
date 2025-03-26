@@ -11,7 +11,8 @@ sudo apt install \
     brightnessctl \
     default-jdk \
     udiskie dosfstools mtools \
-    python3-i3ipc
+    python3-i3ipc \
+    git-lfs wev
 
 # update fonts
 fc-cache
@@ -30,8 +31,8 @@ confirm() {
 # setup kitty
 if confirm "Do you want to install Kitty?"; then
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    ln -s /home/juanolon/.local/kitty.app/bin/kitty ~/.bin/kitty
-    ln -s /home/juanolon/.local/kitty.app/bin/kitten ~/.bin/kitten
+    sudo ln -s /home/juanolon/.local/kitty.app/bin/kitty /usr/local/bin/kitty
+    sudo ln -s /home/juanolon/.local/kitty.app/bin/kitten /usr/local/bin/kitten
     sudo apt remove kitty
     cd -
 fi
@@ -92,8 +93,23 @@ if confirm "Do you want to setup latex?"; then
     echo "TODO"
 fi
 
-if confirm "Do you want to install other?"; then
+if confirm "Do you want to setup wlr-which-key?"; then
+    cargo install wlr-which-key --locked
+    sudo mv /home/juanolon/.cargo/bin/wlr-which-key /usr/local/bin/
+fi
+
+if confirm "Do you want to install all tools?"; then
     sudo tool-sync --config /home/juanolon/.config/tool-sync/config.toml sync
+fi
+
+if confirm "Do you want to sync notes?"; then
+    cd ~
+    git clone git@bitbucket.org:apus-archive/apus-garden.git notes
+fi
+
+if confirm "Do you want to sync pass?"; then
+    cd ~
+    git clone git@bitbucket.org:juanolon/pass.git
 fi
 
 if confirm "Do you want to install theme?"; then

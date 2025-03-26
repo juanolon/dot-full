@@ -4,36 +4,30 @@
 prefer-no-csd
 
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
-spawn-at-startup "./scripts/clamshell";
+spawn-at-startup "/home/juanolon/.config/niri/scripts/clamshell";
 
 
 switch-events {
-    lid-close { spawn "./scripts/clamshell"; }
-    lid-open { spawn "./scripts/clamshell"; }
+    lid-close { spawn "/home/juanolon/.config/niri/scripts/clamshell"; }
+    lid-open { spawn "/home/juanolon/.config/niri/scripts/clamshell"; }
 }
 
 input {
     keyboard {
         xkb {
-            // You can set rules, model, layout, variant and options.
-            // For more information, see xkeyboard-config(7).
-
-            // For example:
-            // layout "us,ru"
-            // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
+            layout "us-german-umlaut"
+            options "ctrl:nocaps, lv3:lalt_switch"
         }
     }
 
-    // Next sections include libinput settings.
-    // Omitting settings disables them, or leaves them at their default values.
     touchpad {
-        // off
         tap
-        // dwt
-        // dwtp
+        dwt
+        dwtp
         // drag-lock
-        natural-scroll
-        // accel-speed 0.2
+        // natural-scroll
+        accel-speed 0.2
+        accel-profile "adaptive"
         // accel-profile "flat"
         // scroll-method "two-finger"
         // disabled-on-external-mouse
@@ -56,57 +50,15 @@ input {
         // scroll-button 273
         // middle-emulation
     }
-
-    // Focus windows and outputs automatically when moving the mouse into them.
-    // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
-    // focus-follows-mouse max-scroll-amount="0%"
 }
 
-/-output "eDP-1" {
-    // Uncomment this line to disable this output.
-    // off
+output "eDP-1" {
+    mode "1920x1080"
 
-    // Resolution and, optionally, refresh rate of the output.
-    // The format is "<width>x<height>" or "<width>x<height>@<refresh rate>".
-    // If the refresh rate is omitted, niri will pick the highest refresh rate
-    // for the resolution.
-    // If the mode is omitted altogether or is invalid, niri will pick one automatically.
-    // Run `niri msg outputs` while inside a niri instance to list all outputs and their modes.
-    mode "1920x1080@120.030"
-
-    // You can use integer or fractional scale, for example use 1.5 for 150% scale.
-    scale 2
-
-    // Transform allows to rotate the output counter-clockwise, valid values are:
-    // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
-    transform "normal"
-
-    // Position of the output in the global coordinate space.
-    // This affects directional monitor actions like "focus-monitor-left", and cursor movement.
-    // The cursor can only move between directly adjacent outputs.
-    // Output scale and rotation has to be taken into account for positioning:
-    // outputs are sized in logical, or scaled, pixels.
-    // For example, a 3840×2160 output with scale 2.0 will have a logical size of 1920×1080,
-    // so to put another output directly adjacent to it on the right, set its x to 1920.
-    // If the position is unset or results in an overlap, the output is instead placed
-    // automatically.
-    position x=1280 y=0
+    scale 1
+    // position x=1280 y=0
 }
 
-// set $base            #191724
-// set $surface         #1f1d2e
-// set $overlay         #26233a
-// 
-// set $muted           #6e6a86
-// set $subtle          #908caa
-// set $text            #e0def4
-// 
-// set $love            #eb6f92
-// set $gold            #f6c177
-// set $rose            #ebbcba
-// set $pine            #31748f
-// set $foam            #9ccfd8
-// set $iris            #c4a7e7
 layout {
     center-focused-column "never"
 
@@ -167,7 +119,8 @@ window-rule {
         offset x=0 y=5
 
         // You can also change the shadow color and opacity.
-        color "$base$"
+        // color "$base$"
+        color "#191724"
     }
 }
 
@@ -197,6 +150,27 @@ window-rule {
         off
     }
 }
+window-rule {
+    match is-window-cast-target=true
+
+    focus-ring {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+
+    border {
+        inactive-color "#7d0d2d"
+    }
+
+    shadow {
+        color "#7d0d2d70"
+    }
+
+    tab-indicator {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+}
 
 binds {
     // Mod-Shift-/, which is usually the same as Mod-?,
@@ -212,7 +186,31 @@ binds {
 
     Super+Alt+L { spawn "swaylock"; }
 
-    // windows
+    Super+Escape { spawn "wlr-which-key" "/home/juanolon/.config/wlr-which-key/system.yaml"; }
+    Super+S { spawn "wlr-which-key" "/home/juanolon/.config/wlr-which-key/screenshot.yaml"; }
+    Super+E { spawn "wlr-which-key" "/home/juanolon/.config/wlr-which-key/toggles.yaml"; }
+
+
+    Mod+C { center-column; }
+
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+
+    Mod+Shift+E { quit; }
+
+    // Powers off the monitors. To turn them back on, do any input like
+    // moving the mouse or pressing any other key.
+    Mod+Shift+P { power-off-monitors; }
+    // The allow-when-locked=true property makes them work even when the session is locked.
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
+    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+    //
+    // WINDOWS
+    //
     Mod+H     { focus-column-left; }
     // Mod+J     { focus-window-down; }
     // Mod+K     { focus-window-up; }
@@ -220,18 +218,32 @@ binds {
     Mod+K     { focus-window-or-workspace-up; }
     Mod+L     { focus-column-right; }
 
-    Mod+Shift+H     { move-column-left; }
+    // Mod+Shift+H     { move-column-left; }
+    Mod+Shift+H     { swap-window-left; }
     // Mod+Shift+J     { move-window-down; }
     // Mod+Shift+K     { move-window-up; }
     Mod+Shift+J     { move-window-down-or-to-workspace-down; }
     Mod+Shift+K     { move-window-up-or-to-workspace-up; }
-    Mod+Shift+L     { move-column-right; }
+    // Mod+Shift+L     { move-column-right; }
+    Mod+Shift+L     { swap-window-right; }
 
 
-    Mod+Ctrl+H { focus-column-first; }
+    // Mod+Ctrl+H { focus-column-first; }
+    Mod+Ctrl+H { move-column-left; }
+    // Mod+Ctrl+L  { focus-column-last; }
     Mod+Ctrl+L  { focus-column-last; }
-    Mod+Ctrl+Home { move-column-to-first; }
-    Mod+Ctrl+End  { move-column-to-last; }
+
+
+    // The following binds move the focused window in and out of a column.
+    // If the window is alone, they will consume it into the nearby column to the side.
+    // If the window is already in a column, they will expel it out.
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+
+    // Consume one window from the right to the bottom of the focused column.
+    Mod+Comma  { consume-window-into-column; }
+    // Expel the bottom window from the focused column to the right.
+    Mod+Period { expel-window-from-column; }
 
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
@@ -252,20 +264,14 @@ binds {
     Mod+Shift+8 { move-column-to-workspace 8; }
     Mod+Shift+9 { move-column-to-workspace 9; }
 
-    Mod+N      cooldown-ms=150 { focus-workspace-down; }
-    Mod+P        cooldown-ms=150 { focus-workspace-up; }
+    // Mod+N { focus-workspace-down; }
+    // Mod+P { focus-workspace-up; }
+    Mod+N     { focus-column-right; }
+    Mod+P     { focus-column-left; }
     Mod+Tab { focus-workspace-previous; }
 
     Mod+Shift+Tab { focus-monitor-next; }
 
-
-
-    // Example volume keys mappings for PipeWire & WirePlumber.
-    // The allow-when-locked=true property makes them work even when the session is locked.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
 
 
     // others:
@@ -283,7 +289,39 @@ binds {
 
 
 
+
+
+
+    //
+    // WINDOW RESIZE
+    //
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    //
+    // FLOATING MODE
+    //
+    Mod+V       { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    //
+    // TAB MODE
+    //
+    Mod+W { toggle-column-tabbed-display; }
+
+    //
     // MOUSE
+    //
     Mod+WheelScrollDown      cooldown-ms=150 { focus-column-right; }
     Mod+WheelScrollUp        cooldown-ms=150 { focus-column-left; }
     Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-right; }
@@ -310,68 +348,4 @@ binds {
     // Mod+TouchpadScrollDown { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02+"; }
     // Mod+TouchpadScrollUp   { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02-"; }
 
-    // The following binds move the focused window in and out of a column.
-    // If the window is alone, they will consume it into the nearby column to the side.
-    // If the window is already in a column, they will expel it out.
-    Mod+BracketLeft  { consume-or-expel-window-left; }
-    Mod+BracketRight { consume-or-expel-window-right; }
-
-    // Consume one window from the right to the bottom of the focused column.
-    Mod+Comma  { consume-window-into-column; }
-    // Expel the bottom window from the focused column to the right.
-    Mod+Period { expel-window-from-column; }
-
-    Mod+R { switch-preset-column-width; }
-    Mod+Shift+R { switch-preset-window-height; }
-    Mod+Ctrl+R { reset-window-height; }
-    Mod+F { maximize-column; }
-    Mod+Shift+F { fullscreen-window; }
-
-    // Expand the focused column to space not taken up by other fully visible columns.
-    // Makes the column "fill the rest of the space".
-    Mod+Ctrl+F { expand-column-to-available-width; }
-
-    Mod+C { center-column; }
-
-    // Finer width adjustments.
-    // This command can also:
-    // * set width in pixels: "1000"
-    // * adjust width in pixels: "-5" or "+5"
-    // * set width as a percentage of screen width: "25%"
-    // * adjust width as a percentage of screen width: "-10%" or "+10%"
-    // Pixel sizes use logical, or scaled, pixels. I.e. on an output with scale 2.0,
-    // set-column-width "100" will make the column occupy 200 physical screen pixels.
-    Mod+Minus { set-column-width "-10%"; }
-    Mod+Equal { set-column-width "+10%"; }
-
-    // Finer height adjustments when in column with other windows.
-    Mod+Shift+Minus { set-window-height "-10%"; }
-    Mod+Shift+Equal { set-window-height "+10%"; }
-
-    // Move the focused window between the floating and the tiling layout.
-    Mod+V       { toggle-window-floating; }
-    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
-
-    // Toggle tabbed column display mode.
-    // Windows in this column will appear as vertical tabs,
-    // rather than stacked on top of each other.
-    Mod+W { toggle-column-tabbed-display; }
-
-    // Actions to switch layouts.
-    // Note: if you uncomment these, make sure you do NOT have
-    // a matching layout switch hotkey configured in xkb options above.
-    // Having both at once on the same hotkey will break the switching,
-    // since it will switch twice upon pressing the hotkey (once by xkb, once by niri).
-    // Mod+Space       { switch-layout "next"; }
-    // Mod+Shift+Space { switch-layout "prev"; }
-
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
-
-    Mod+Shift+E { quit; }
-
-    // Powers off the monitors. To turn them back on, do any input like
-    // moving the mouse or pressing any other key.
-    Mod+Shift+P { power-off-monitors; }
 }
