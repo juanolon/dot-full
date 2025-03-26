@@ -1,0 +1,36 @@
+# Theming
+font: JetBrainsMono Nerd Font 12
+background: "#282828d0"
+color: "#fbf1c7"
+border: "#8ec07c"
+separator: " ➜ "
+border_width: 2
+corner_r: 10
+padding: 15 # Defaults to corner_r
+
+# Anchor and margin
+anchor: top-left # One of center, left, right, top, bottom, bottom-left, top-left, etc.
+margin_right: 0
+margin_bottom: 0
+margin_left: 10
+margin_top: 10
+
+menu:
+  "d":
+    desc: day-night
+    cmd: ~/.bin/day-night toggle
+  # "e":
+  #   desc: Logout
+  #   cmd: niri msg action quit
+  # "s":
+  #   desc: Suspend
+  #   cmd: ~/.bin/lock-screen && systemctl suspend
+  # "h":
+  #   desc: Hibernate
+  #   cmd: ~/.bin/lock-screen && systemctl hibernate
+  # "r":
+  #   desc: Reboot
+  #   cmd: systemctl reboot
+  # "S":
+  #   desc: Shutdown
+  #   cmd: systemctl poweroff -i
