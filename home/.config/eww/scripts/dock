@@ -15,10 +15,10 @@ case $1 in
     toggle)
         if is-open; then
             eww close dock
-            swaymsg mode "default"
+            # swaymsg mode "default"
         else
             eww open dock
-            swaymsg mode "dock"
+            # swaymsg mode "dock"
         fi
         ;;
 esac

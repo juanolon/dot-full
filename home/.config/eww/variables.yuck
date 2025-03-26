@@ -53,10 +53,13 @@
 ;; BATTERY
 (deflisten bat0
   :initial '{"icon": "", "percentage": 0, "status": "unplugged", "time": "", "id": "bat0"}'
-  "scripts/battery BAT0")
+  ; :run-while "scripts/battery has BAT0"
+  "scripts/battery status BAT0")
 (deflisten bat1
   :initial '{"icon": "", "percentage": 0, "status": "unplugged", "time": "", "id": "bat0"}'
-  "scripts/battery BAT1")
+  :run-while "scripts/battery has BAT1"
+  "scripts/battery status BAT1")
+(defvar show-bat1 false)
 
 ;; VOLUME/BRIGHTNESS
 ; TODO deflisten run-while?

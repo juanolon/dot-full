@@ -16,6 +16,14 @@ print_workspaces() {
     workspace_list=()
     for d in $desktops; do
         if contains "$focused" "$d" ; then
+        #     class="focused"
+        #     label=" $d"
+        # elif contains "$urgent" "$d" && [ -n "$str" ] ; then
+        #     class="urgent"
+        #     label=" $d"
+        # else 
+        #     class="empty"
+        #     label=" $d"
             is_active=true
         else 
             is_active=false

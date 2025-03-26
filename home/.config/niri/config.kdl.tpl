@@ -67,9 +67,9 @@ layout {
         // Proportion sets the width as a fraction of the output width, taking gaps into account.
         // For example, you can perfectly fit four windows sized "proportion 0.25" on an output.
         // The default preset widths are 1/3, 1/2 and 2/3 of the output.
-        proportion 0.33333
         proportion 0.5
         proportion 0.66667
+        proportion 0.33333
 
         // Fixed sets the width in logical pixels exactly.
         // fixed 1920
@@ -172,6 +172,12 @@ window-rule {
     }
 }
 
+workspace "music"
+window-rule {
+    match app-id="spotify"
+    open-on-workspace "music"
+}
+
 binds {
     // Mod-Shift-/, which is usually the same as Mod-?,
     // shows a list of important hotkeys.
@@ -201,12 +207,27 @@ binds {
 
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
-    Mod+Shift+P { power-off-monitors; }
+    // Mod+Shift+P { power-off-monitors; }
     // The allow-when-locked=true property makes them work even when the session is locked.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+    //
+    // Fn Keys
+    //
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "~/.bin/volume" "up"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "~/.bin/volume" "down"; }
+    XF86AudioMute        allow-when-locked=true { spawn "~/.bin/volume" "mute"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "~/.bin/volume" "nomic"; }
+
+    XF86MonBrightnessDown allow-when-locked=true { spawn "~/.bin/backlight" "up"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "~/.bin/backlight" "down"; }
+
+    XF86Display allow-when-locked=true { spawn "/home/juanolon/.config/niri/scripts/clamshell"; }
+
+    XF86NotificationCenter allow-when-locked=true { spawn ".config/eww/scripts/dock" "toggle"; }
+    // XF86PickupPhone
+    // XF86HangupPhone
+    // XF86HangupPhone
+    XF86Favorites allow-when-locked=true { spawn "albert" "show" "pass "; }
 
     //
     // WINDOWS
