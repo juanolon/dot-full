@@ -109,7 +109,7 @@ fi
 
 if confirm "Do you want to sync pass?"; then
     cd ~
-    git clone git@bitbucket.org:juanolon/pass.git
+    git clone git@bitbucket.org:juanolon/pass.git .password-store
 fi
 
 if confirm "Do you want to install theme?"; then
