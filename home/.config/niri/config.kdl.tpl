@@ -13,6 +13,7 @@ switch-events {
 }
 
 input {
+    workspace-auto-back-and-forth
     keyboard {
         xkb {
             layout "us-german-umlaut"
@@ -218,8 +219,8 @@ binds {
     XF86AudioMute        allow-when-locked=true { spawn "~/.bin/volume" "mute"; }
     XF86AudioMicMute     allow-when-locked=true { spawn "~/.bin/volume" "nomic"; }
 
-    XF86MonBrightnessDown allow-when-locked=true { spawn "~/.bin/backlight" "up"; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn "~/.bin/backlight" "down"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "~/.bin/backlight" "down"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "~/.bin/backlight" "up"; }
 
     XF86Display allow-when-locked=true { spawn "/home/juanolon/.config/niri/scripts/clamshell"; }
 
@@ -291,7 +292,7 @@ binds {
     Mod+P     { focus-column-left; }
     Mod+Tab { focus-workspace-previous; }
 
-    Mod+Shift+Tab { focus-monitor-next; }
+    Mod+Grave { focus-monitor-next; }
 
 
 

@@ -111,7 +111,8 @@ map ctrl+f>d   scroll_page_down
 scrollback_pager bash -c 'nvim </dev/null -u NORC -c "map q :qa!<CR>" -c "autocmd TermOpen * normal G" -c "terminal cat /proc/$$/fd/0 -" -c "set clipboard+=unnamedplus" -c "call cursor(CURSOR_LINE, CURSOR_COLUMN)"'
 map ctrl+f>] show_scrollback
 
+
 # BEGIN_KITTY_THEME
-# Rosé Pine
+# Rosé Pine Dawn
 include current-theme.conf
 # END_KITTY_THEME

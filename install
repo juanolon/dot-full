@@ -12,7 +12,7 @@ sudo apt install \
     default-jdk \
     udiskie dosfstools mtools \
     python3-i3ipc \
-    git-lfs wev
+    git-lfs wev playerctl
 
 # update fonts
 fc-cache

@@ -16,21 +16,12 @@ margin_left: 10
 margin_top: 10
 
 menu:
-  "l":
-    desc: Lock
-    cmd: ~/.bin/lock-screen
-  "e":
-    desc: Logout
-    cmd: niri msg action quit
   "s":
-    desc: Suspend
-    cmd: ~/.bin/lock-screen && systemctl suspend
-  "h":
-    desc: Hibernate
-    cmd: ~/.bin/lock-screen && systemctl hibernate
-  "r":
-    desc: Reboot
-    cmd: systemctl reboot
-  "S":
-    desc: Shutdown
-    cmd: systemctl poweroff -i
+    desc: Screen
+    cmd: niri msg action screenshot-screen -d true
+  "w":
+    desc: Window
+    cmd: niri msg action screenshot-window -d true
+  "a":
+    desc: Area
+    cmd: niri msg action screenshot
