@@ -109,7 +109,13 @@ fi
 
 if confirm "Do you want to sync pass?"; then
     cd ~
+    read -p "Enter your current GPG ID (e.g., user@work): " gpg_id
+    if [[ -z "$gpg_id" ]]; then
+        echo "Error: No GPG ID provided. Aborting." >&2
+        exit 1
+    fi
     git clone git@bitbucket.org:juanolon/pass.git .password-store
+    echo "$gpg_id" > ~/.password-store/.gpg-id
 fi
 
 if confirm "Do you want to install theme?"; then
