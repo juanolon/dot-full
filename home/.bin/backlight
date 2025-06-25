@@ -1,66 +1,126 @@
 #!/bin/bash
 
+
+PLAYSOUND=true
+SOUND=/usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+TIMEOUT=1500
+ID=12355
+BL_TOOL="brightnessctl"
+
+declare -A connector_to_dev
+
+for devpath in /sys/class/backlight/*; do
+    dev=$(basename "$devpath")
+    real=$(readlink -f "$devpath/device")
+
+    conn=$(grep -oE 'card[0-9]+-[A-Za-z0-9-]+' <<<"$real" || true)
+    if [[ -n "$conn" ]]; then
+        conn="${conn#*-}"
+        # dev = ddcci10, conn = DP-1
+        connector_to_dev["$conn"]=$dev
+    else
+        connector_to_dev["eDP-1"]=$dev
+    fi
+done
+
+focused=$(niri msg focused-output \
+           | head -n1 \
+           | sed -n 's/.*(\([^)]*\)).*/\1/p')
+
+device=${connector_to_dev[$focused]:-}
+if [[ -z "$device" ]]; then
+    echo "Unknown output: $focused"
+    exit 1
+fi
+
 INCREMENT=20
 SET_VALUE=0
-MAX=$(brightnessctl m)
-BACKLIGHT=$(brightnessctl g)
 
-case $1 in
+get_backlight() { $BL_TOOL -d "$device" g; }
+get_max()       { $BL_TOOL -d "$device" m; }
+
+
+buildBar () {
+    $HOME/.bin/drawbar $1 $2 $3
+}
+
+send_notification () {
+    local back=$(get_backlight)
+    local max=$(get_max)
+    local pct=$(( back * 100 / max ))
+
+    BODY="`buildBar 5 $pct false` $pct%"
+    URGENCY="normal"
+
+    $PLAY_SOUND && paplay "$SOUND" &
+
+    dunstify -t "$TIMEOUT" -r "$ID" -u "$URGENCY" "$BODY"
+}
+
+cmd=${1:-}
+arg=${2:-}
+
+case $cmd in
     set)
-        # $2 is in percent
-        val=$(echo "scale=2; ($2*$MAX)/100" | bc)
-		if [ "$val" -lt "1" ]; then
-			val=1
-		fi
-        brightnessctl s $val
+    arg=${arg%\%}
+
+    # Clamp arg to [1..100]
+    if (( arg < 1 )); then
+        arg=1
+    elif (( arg > 100 )); then
+        arg=100
+    fi
+
+    # Fetch max value once
+    max=$(get_max)
+
+    # Calculate raw brightness: (arg% of max)
+    raw=$(( arg * max / 100 ))
+
+    # Ensure we get at least 1
+    if (( raw < 1 )); then
+        raw=1
+    fi
+
+        $BL_TOOL -d "$device" s "$raw"
+        send_notification
         ;;
-	up)
-		TOTAL=$((BACKLIGHT + INCREMENT))
-		if [ "$TOTAL" -gt "$MAX" ]; then
-			exit 1
-		fi
-		SET_VALUE=1
-		;;
-	down)
-		TOTAL=$((BACKLIGHT - INCREMENT))
-		if [ "$TOTAL" -lt "1" ]; then
-			exit 1
-		fi
-		SET_VALUE=1
-		;;
+	up|down)
+        [[ "$cmd" == "up" ]] && delta=$INCREMENT || delta=-$INCREMENT
+        new=$(( $(get_backlight) + $delta ))
+        max=$(get_max)
+        (( $new < 1 ))   && new=1
+        (( $new > $max )) && new=$max
+
+        $BL_TOOL -d "$device" s "$new"
+        send_notification
+        ;;
 	get)
-		val=$((BACKLIGHT * 100 / MAX))
-		echo $val
-		exit 0
+        echo $(( $(get_backlight) * 100 / $(get_max) ))
 	    ;;
 	min)
-		TOTAL=$INCREMENT
-		SET_VALUE=1
+        $BL_TOOL -d "$device" s 1
+        send_notification
 		;;
 	max)
-		# TEMP_VALUE=$BACKLIGHT
-		# while [ "$TEMP_VALUE" -lt "$MAX" ]; do
-		# 	TEMP_VALUE=$((TEMP_VALUE + 1))
-		# 	if [ "$TEMP_VALUE" -gt "$MAX" ]; then TEMP_VALUE=$MAX; fi
-		# 	echo "$TEMP_VALUE" > $BLFILE
-		# done
-		SET_VALUE=1
-		TOTAL=$MAX
+        $BL_TOOL -d "$device" s "$(get_max)"
+        send_notification
 		;;
 	off)
-		TEMP_VALUE=$BACKLIGHT
-		while [ "$TEMP_VALUE" -gt "0" ]; do
-			TEMP_VALUE=$((TEMP_VALUE - 1))
-			if [ "$TEMP_VALUE" -lt "0" ]; then TEMP_VALUE=0; fi
-			echo "$TEMP_VALUE" > $BLFILE
-		done
+        $BL_TOOL -d "$device" s 0
+        send_notification
 		;;
 	*)
-		echo "Use: screen-backlight up|down|max|min|off"
-		;;
+        cat <<EOF
+Usage: $(basename "$0") <command> [arg]
+Commands:
+set N[%]    Set to N percent (e.g. set 75)
+up          Increase by $INCREMENT
+down        Decrease by $INCREMENT
+min         Minimum brightness (1)
+max         Maximum brightness
+off         Zero brightness
+get         Print current percent and exit
+EOF
+;;
 esac
-
-if [ "$SET_VALUE" -eq "1" ]; then
-    brightnessctl -q s $TOTAL
-    # sendNotification
-fi

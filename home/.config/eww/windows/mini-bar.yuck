@@ -1,0 +1,75 @@
+(deflisten min_bat
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st bat status")
+
+(deflisten min_usb
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st usb status")
+
+(deflisten min_bt
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st bt status")
+
+(deflisten min_wlan
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st wlan status")
+
+(deflisten min_media
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st media status")
+
+(deflisten min_ws
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st niri status")
+
+(deflisten min_pomo
+  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  "~/repos/st/st pomo status")
+
+(defwidget mini-bar []
+  (box
+    (box :orientation "h" :space-evenly false :halign "start" :hexpand "true"
+      ; (ws)
+      (icon-group :data min_ws)
+      )
+
+    (box :orientation "h" :space-evenly false :halign "center" :hexpand "true"
+      ; media
+      (media-group :data min_media)
+      )
+
+      ; (media-group :data min_pomo)
+    (box :orientation "h" :space-evenly false :halign "end" :hexpand "true"
+      ; usbs
+      (icon-group :data min_usb)
+      ; (icon-group
+      ;   (icon :icon "")
+      ;   (icon :icon "")
+      ;   )
+
+      ; bluetooth
+      (icon-group :data min_bt)
+      ; (icon-group
+      ;   (icon :icon "")
+      ;   (icon :icon "")
+      ;   )
+      ; wifi
+      (icon-group :data min_wlan)
+      ; (icon-group
+      ;   (icon :icon "")
+      ;   )
+
+      ; batteries
+      (icon-group :data min_bat)
+      ; (icon-group
+      ;   (icon :icon "")
+      ;   (icon :icon "")
+      ;   )
+
+      (icon-group
+        (icon :icon "${formattime(EWW_TIME, '%a %d-%m')}" :class "date")
+        (icon :icon "${formattime(EWW_TIME, '%H:%M')}" :class "date")
+        )
+      )
+    )
+  )

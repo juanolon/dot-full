@@ -1,0 +1,103 @@
+(defwidget mbtn [active ?onclick ?onrightclick]
+  (eventbox
+    :class "mbtn"
+    :onclick onclick
+    :onrightclick onrightclick
+    :cursor {active == "" || active ? "hand" : "default"}
+    (children)
+    )
+  )
+
+(defwidget icon [icon ?tooltip ?class ?onclick ?onrightclick]
+  (mbtn
+    :active true
+    :onclick "${onclick}"
+    :onrightclick "${onrightclick}"
+      (label
+        :tooltip tooltip
+        :class "icon ${class}"
+        :text icon)
+  )
+  )
+
+(defwidget media-group [?data]
+  (box
+    :space-evenly false
+    (for group in {jq(data, '. | group_by(.id) | map(select(.[0].class!="Stopped"))')}
+      (icon-group :data {jq(group, '.[1:]')}
+        (label
+          :text "${data[0].icon} ${data[0].tooltip}"
+          :tooltip "${data[0].tooltip}"
+          :class "${data[0].class} header"
+          :limit-width 25
+          )
+        )
+      ; (box
+      ; (for mod in {group}
+      ;   (box
+      ;    (label
+      ;      :text "${mod.id}"
+      ;      )
+      ;    )
+      ;   )
+      ;   )
+      )
+    ; (icon-group :data data)
+    ; (icon :icon "")
+    ; ; (label :text "Por las Buenas")
+    ; (icon :icon "")
+    ; (icon :icon ""); 
+    ; (icon :icon "")
+    )
+  )
+
+(defwidget icon-group [?data]
+  (box
+    :class "icon-group"
+    :space-evenly false
+    :visible {arraylength(data) > 0}
+    (children)
+    (for i in {data}
+      (icon
+        :icon "${i.icon}"
+        :tooltip "${i.tooltip}"
+        :class "${i.class}"
+        :onclick "${i.onclick}"
+        :onrightclick "${i.onrightclick}"
+        )
+      )
+    )
+  )
+
+(defwidget ws [?active]
+  (box
+    :class "icon-group"
+    (label :text "3")
+    (col :id 1)
+    (col :id 2)
+    (col :id 3)
+    (col :id 4)
+    )
+  )
+
+(defwidget ws-ids []
+  (box
+    :oritentation "v"
+    :space-evenly false
+    (label :text "3")
+    (label :text "3")
+    (label :text "3")
+    )
+  )
+
+(defwidget col [?active ?id]
+  (eventbox
+    :class "col"
+    :onclick "dunstify '${id}'"
+    ; ⌾⍜⊙⊜
+    :cursor "hand"
+      (label
+        :class "col-dot"
+        :text "⊙")
+      )
+  )

@@ -61,3 +61,7 @@
 
 ; notification (end-rs)
 (include "end.yuck")
+
+; NEW BAR
+(include "windows/mini-bar.yuck")
+(include "modules/mini/icons.yuck")

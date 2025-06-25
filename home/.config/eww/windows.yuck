@@ -7,6 +7,27 @@
   (bar)
 )
 
+(defwindow mini-bar
+  :monitor 0
+  :geometry (geometry :width "100%"
+                      :anchor "top center")
+  :exclusive true
+  :namespace "home"
+  (mini-bar)
+)
+(defwindow ws-ids
+  :monitor 0
+  :stacking "fg"
+  :focusable false
+  :geometry (geometry
+    :x "1%"
+    :y "1%"
+    :width "0%"
+    :height "0%"
+    :anchor "top left")
+  (ws-ids)
+)
+
 (defwindow music
   :stacking "fg"
   :focusable false

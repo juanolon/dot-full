@@ -3,6 +3,7 @@
 * {
   all: unset;
   font-family: "JetbrainsMono Nerd Font";
+  // font-family: "JetbrainsMono Nerd Font", "Material Icons";
   font-size: 15px;
   color: $font-color;
   border: none;
@@ -13,9 +14,9 @@ tooltip {
   color: $font-color;
 }
 
-.bar {
-  min-height: 25px;
-}
+// .bar {
+//   min-height: 25px;
+// }
 
 // START original
 
@@ -154,3 +155,7 @@ tooltip {
 
 // notifications (end-rs)
 @import "end.scss";
+
+
+// NEW BAR
+@import "scss/mini-bar.scss";

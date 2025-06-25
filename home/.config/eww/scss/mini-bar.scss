@@ -1,0 +1,50 @@
+.mini-bar {
+  .icon-group {
+    background: $overlay;
+    border-radius: 4px;
+    padding: 2px;
+    margin: 0 3px;
+
+    .header {
+      padding: 2px 6px;
+    }
+  }
+
+  .mbtn {
+    .icon {
+      padding: 2px 6px;
+      font-family: "Material Symbols Rounded Filled 36pt", "Symbols Nerd Font";
+      margin: 0;
+
+
+      &.date {
+        font-family: "CommitMonoJuanpablo";
+      }
+    }
+
+    background-color: $base;
+    transition: background-color 50ms ease-in,
+    box-shadow 50ms ease-in;
+
+    &:hover,
+    &:focus {
+      background-color: $overlay;
+    }
+
+    &:active {
+      background-color: $overlay;
+      box-shadow: inset 0 2px 2px $highlightHigh;
+      // border-radius: 4px;
+    }
+  }
+}
+
+.col {
+  background-color: $base;
+
+  .col-dot {
+    font-weight: 600;
+    margin: 0 6px;
+    border-radius: 10px;
+  }
+}
