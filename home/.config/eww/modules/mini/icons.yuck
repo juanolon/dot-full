@@ -51,6 +51,23 @@
     )
   )
 
+; TODO same logic as media. refactor to cmd(-comp?): consists of multiple elements
+; belonging to the same component (media: player, play, pause; pomo: toggle, stop)
+; media-group: rename to cmd-group: a group of cmd.. (player can have multiple of them)
+(defwidget pomo-group [?data]
+  (box
+    :space-evenly false
+      (icon-group :data {jq(data, '.[1:]')}
+        (label
+          :text "${data[0].icon} ${data[0].tooltip}"
+          :tooltip "${data[0].tooltip}"
+          :class "${data[0].class} header"
+          :limit-width 25
+          )
+        )
+    )
+  )
+
 (defwidget icon-group [?data]
   (box
     :class "icon-group"

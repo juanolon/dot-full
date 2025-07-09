@@ -23,7 +23,7 @@
   "~/repos/st/st niri status")
 
 (deflisten min_pomo
-  :initial '[{"onrightclick":"dunstify \'right\'","onclick": "dunstify \'left\'","class":"full","tooltip":"0h 0m","icon":""}]'
+  :initial '[]'
   "~/repos/st/st pomo status")
 
 (defwidget mini-bar []
@@ -36,9 +36,8 @@
     (box :orientation "h" :space-evenly false :halign "center" :hexpand "true"
       ; media
       (media-group :data min_media)
+      (pomo-group :data min_pomo)
       )
-
-      ; (media-group :data min_pomo)
     (box :orientation "h" :space-evenly false :halign "end" :hexpand "true"
       ; usbs
       (icon-group :data min_usb)

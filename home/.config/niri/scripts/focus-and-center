@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 [left|right]"
+    exit 1
+fi
+
+case "$1" in
+    left)
+        ACTION="focus-column-left"
+        ;;
+    right)
+        ACTION="focus-column-right"
+        ;;
+    *)
+        echo "Invalid direction: '$1'. Use 'left' or 'right'."
+        exit 1
+        ;;
+esac
+
+niri msg action "$ACTION"
+niri msg action center-column
