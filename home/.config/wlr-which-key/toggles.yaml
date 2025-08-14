@@ -19,6 +19,10 @@ menu:
   "d":
     desc: day-night
     cmd: ~/.bin/day-night toggle
+  "p":
+    desc: pomodoro
+    cmd: ~/repos/st/st module pomo mode work
+
   # "e":
   #   desc: Logout
   #   cmd: niri msg action quit

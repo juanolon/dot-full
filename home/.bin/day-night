@@ -112,7 +112,7 @@ else
     # COLOR_SCHEME="default"
     # THEME="Adwaita"
     # ICON_THEME="breeze"
-    COLOR_SCHEME="default"
+    COLOR_SCHEME="prefer-light"
     THEME="rose-pine-dawn-gtk"
     ICON_THEME="rose-pine-dawn-icons"
     DUNST_LIGHT_FILE=$DUNSTRC/80-rose-pine-dawn.conf
@@ -135,7 +135,7 @@ case $1 in
         # kitty
         # kitty +kitten themes --reload-in=all gruvbox $MODE doh
         # kitty +kitten themes --reload-in=all --cache-age=-1 Adwaita $MODE
-        kitty +kitten themes --reload-in=all --cache-age=-1 $KITTY_THEME
+        # kitty +kitten themes --reload-in=all --cache-age=-1 $KITTY_THEME
 
         sed -i "s/palette = '$STARSHIP_THEME_OLD'/palette = '$STARSHIP_THEME'/" ~/.config/zsh/starship.toml
 

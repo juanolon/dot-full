@@ -59,11 +59,10 @@ store_directory = "/usr/local/bin"
     # tag = "v0.60.3"
     asset_name.linux = "linux-amd64"
 
-# TODO bin not compressed
-[pomodoro-cli]
-    owner     = "jkallio"
-    repo      = "pomodoro-cli"
-    exe_name  = "pomodoro-cli"
+[lnav]
+    owner     = "tstack"
+    repo      = "lnav"
+    exe_name  = "lnav"
 
-    # tag = "v.1.2.5"
-    asset_name.linux = "pomodoro-cli"
+    # tag = "v0.60.3"
+    asset_name.linux = "linux-musl-arm64"

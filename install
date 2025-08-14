@@ -12,7 +12,7 @@ sudo apt install \
     default-jdk \
     udiskie dosfstools mtools \
     python3-i3ipc \
-    git-lfs wev playerctl
+    git-lfs wev playerctl qdirstat
 
 # update fonts
 fc-cache
@@ -47,11 +47,11 @@ fi
 
 if confirm "Do you want to setup nvim?"; then
     cd /tmp
-    wget https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz
+    wget https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-linux-x86_64.tar.gz
     tar -xf nvim-linux-x86_64.tar.gz && cd nvim-linux-x86_64
-    sudo mv -r share /usr/local
-    sudo mv -r lib /usr/local
-    sudo mv -r bin /usr/local
+    sudo mv share /usr/local
+    sudo mv lib /usr/local
+    sudo mv bin /usr/local
     cd -
 fi
 

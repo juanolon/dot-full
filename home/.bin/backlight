@@ -33,7 +33,7 @@ if [[ -z "$device" ]]; then
     exit 1
 fi
 
-INCREMENT=20
+INCREMENT=10
 SET_VALUE=0
 
 get_backlight() { $BL_TOOL -d "$device" g; }

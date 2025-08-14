@@ -1,5 +1,6 @@
 #!/bin/bash
 
+jupyter serverextension disable jupyterlab --sys-prefix && \
 jupyter nbextension    install jupyter_ascending --sys-prefix --py && \
 jupyter nbextension     enable jupyter_ascending --sys-prefix --py && \
 jupyter serverextension enable jupyter_ascending --sys-prefix --py && \

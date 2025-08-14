@@ -63,6 +63,9 @@ output "eDP-1" {
 layout {
     center-focused-column "never"
 
+    // center column, if only column in workspace
+    always-center-single-column
+
     // You can customize the widths that "switch-preset-column-width" (Mod+R) toggles between.
     preset-column-widths {
         // Proportion sets the width as a fraction of the output width, taking gaps into account.
@@ -103,6 +106,24 @@ layout {
         top -6
         bottom -6
     }
+    background-color "transparent"
+}
+
+overview {
+    workspace-shadow {
+        off
+    }
+}
+
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+layer-rule {
+    match namespace="^wallpaper$"
+    place-within-backdrop true
 }
 
 window-rule {
@@ -289,7 +310,9 @@ binds {
     // Mod+N { focus-workspace-down; }
     // Mod+P { focus-workspace-up; }
     Mod+N     { focus-column-right; }
+    Mod+Shift+N     { swap-window-right; }
     Mod+P     { focus-column-left; }
+    Mod+Shift+P     { swap-window-left; }
     Mod+Tab { focus-workspace-previous; }
 
     Mod+Grave { focus-monitor-next; }
@@ -344,8 +367,8 @@ binds {
     //
     // MOUSE
     //
-    Mod+WheelScrollDown      cooldown-ms=150 { focus-column-right; }
-    Mod+WheelScrollUp        cooldown-ms=150 { focus-column-left; }
+    Mod+WheelScrollDown      cooldown-ms=150 { spawn "/home/juanolon/.config/niri/scripts/focus-and-center" "right"; }
+    Mod+WheelScrollUp        cooldown-ms=150 { spawn "/home/juanolon/.config/niri/scripts/focus-and-center" "left"; }
     Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-right; }
     Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-left; }
 
